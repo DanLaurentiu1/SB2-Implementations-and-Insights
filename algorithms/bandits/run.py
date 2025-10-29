@@ -26,39 +26,33 @@ def set_global_seed(seed: int):
 
 @main(config_path="configs", config_name="default", version_base=None)
 def run(cfg: DictConfig):
-    # build a run directory inside experiments/
     experiments_base = ROOT / "experiments"
     run_name = cfg["run"]["name"]
-    experiment_directory = "HEHE, directory"
-    make_experiment_directory(str(experiments_base), run_name)
+    experiment_directory = make_experiment_directory(experiments_base, run_name)
 
-    # set the seed
     seed = cfg["run"]["seed"]
     if seed is not None:
         set_global_seed(int(seed))
 
-    # build the environment
     env = make_env(cfg["environment"])
 
-    # dynamic import of Agent class defined by the algo config
     module_path = cfg["algorithm"]["module"]
     class_name = cfg["algorithm"]["class_name"]
     impl_mod = importlib.import_module(module_path)
     AgentClass = getattr(impl_mod, class_name)
 
-    # instantiate the agent
     agent = AgentClass(cfg["algorithm"]["params"])
     if hasattr(agent, "seed"):
         agent.seed(int(seed))
 
-    # create the logger
-    logger = CSVLogger(experiment_directory)
+    logger = CSVLogger(directory=experiment_directory, columns=agent.get_metrics())
 
-    # training loop
     episodes = int(cfg["run"]["episodes"])
-    for _ in range(episodes):
+    for ep in range(episodes):
         out = agent.run_episode(env)
-        print(out)
+        # make my other metrics
+        row = {"episode": ep, "episode_reward": out["episode_reward"]}
+        logger.log(row)
     print("Run finished. Results in:", experiment_directory)
 
 
