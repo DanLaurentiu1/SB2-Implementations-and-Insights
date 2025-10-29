@@ -41,7 +41,9 @@ def run(cfg: DictConfig):
     impl_mod = importlib.import_module(module_path)
     AgentClass = getattr(impl_mod, class_name)
 
-    agent = AgentClass(cfg["algorithm"]["params"])
+    agent = AgentClass(
+        cfg["algorithm"]["params"]
+    )  # bug here, we do not have the actual values, but dictconf
     if hasattr(agent, "seed"):
         agent.seed(int(seed))
 
