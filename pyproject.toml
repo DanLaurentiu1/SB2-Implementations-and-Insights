@@ -1,0 +1,26 @@
+[project]
+name = "sb2-implementations-and-insights"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Dan Laurentiu",email = "danlaurentiuwork@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+dependencies = [
+    "numpy (>=2.3.4,<3.0.0)",
+    "pandas (>=2.3.3,<3.0.0)",
+    "matplotlib (>=3.10.7,<4.0.0)",
+    "gymnasium (>=1.2.1,<2.0.0)",
+    "hydra-core (>=1.3.2,<2.0.0)",
+    "omegaconf (>=2.3.0,<3.0.0)",
+    "gitpython (>=3.1.45,<4.0.0)",
+    "torch (>=2.9.0,<3.0.0)",
+    "torchvision (>=0.24.0,<0.25.0)",
+    "wandb (>=0.22.2,<0.23.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

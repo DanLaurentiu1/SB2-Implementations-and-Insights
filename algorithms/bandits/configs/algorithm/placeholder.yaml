@@ -1,0 +1,4 @@
+module: "algorithms.bandits.implementations"
+class_name: "PlaceholderBanditAgent"
+params:
+  n_arms: 10
