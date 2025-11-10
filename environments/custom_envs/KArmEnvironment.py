@@ -20,7 +20,7 @@ class KArmEnvironment(gymnasium.Env):
         self.optimal_arm = int(np.argmax(self.arm_means))
 
     def _get_obs(self):
-        return 0
+        return np.int64(1)
 
     def _get_info(self, optimal_arm_chosen: bool):
         return {"optimal_arm_chosen": optimal_arm_chosen}
@@ -37,6 +37,7 @@ class KArmEnvironment(gymnasium.Env):
         terminated = self.pulls >= self.max_steps
         is_optimal = action == self.optimal_arm
         self.pulls += 1
+        # this works only if action is [0, self.number_of_arms - 1]
         reward = np.random.normal(loc=self.arm_means[action], scale=1.0)
         return (
             self._get_obs(),
