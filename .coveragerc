@@ -1,0 +1,9 @@
+[run]
+omit =
+    */__init__.py
+    tests/*
+branch = True
+
+[report]
+show_missing = True
+skip_covered = False
