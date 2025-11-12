@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from environments.custom_envs.KArmEnvironment import KArmEnvironment
+from utils.exceptions.logic_exceptions import EnvironmentLogicException
 
 
 # GIVEN
@@ -84,6 +85,7 @@ def test_step_output(simple_bandit_environment: KArmEnvironment):
 def test_step_terminated(simple_bandit_environment: KArmEnvironment):
     # WHEN
     for _ in range(1, simple_bandit_environment.max_steps):
+        assert simple_bandit_environment.terminated == False
         simple_bandit_environment.step(0)
     _, _, step_terminated, _, _ = simple_bandit_environment.step(0)
 
@@ -98,3 +100,64 @@ def test_step_reward_values(simple_bandit_environment: KArmEnvironment):
 
         # THEN
         assert mean - 3 <= reward <= mean + 3
+
+
+def test_ensure_not_terminated_correctly_called(
+    simple_bandit_environment: KArmEnvironment,
+):
+    # WHEN
+    for _ in range(simple_bandit_environment.max_steps):
+        simple_bandit_environment.step(0)
+
+    # THEN
+    with pytest.raises(EnvironmentLogicException) as exception_output:
+        simple_bandit_environment.step(0)
+    assert "step() called after rollout termination. call reset() first." in str(
+        exception_output.value
+    )
+
+
+def test_validate_input_number_of_arms_invalid():
+    # WHEN
+    with pytest.raises(EnvironmentLogicException) as exception_output:
+        KArmEnvironment(number_of_arms=-1, seed=16, max_steps=10)
+
+    # THEN
+    assert (
+        "Invalid number of arms=-1. This number must be positive and bigger than 0."
+        in str(exception_output.value)
+    )
+
+
+def test_validate_input_seed_invalid():
+    # WHEN
+    with pytest.raises(EnvironmentLogicException) as exception_output:
+        KArmEnvironment(number_of_arms=2, seed=-1, max_steps=10)
+
+    # THEN
+    assert "Invalid seed=-1. This number must be positive." in str(
+        exception_output.value
+    )
+
+
+def test_validate_input_max_steps_invalid():
+    # WHEN
+    with pytest.raises(EnvironmentLogicException) as exception_output:
+        KArmEnvironment(number_of_arms=12, seed=16, max_steps=-1)
+
+    # THEN
+    assert (
+        "Invalid number of max_steps=-1. This number must be positive and bigger than 0."
+        in str(exception_output.value)
+    )
+
+
+def test_validate_action_invalid(simple_bandit_environment: KArmEnvironment):
+    # WHEN
+    with pytest.raises(EnvironmentLogicException) as exception_output:
+        simple_bandit_environment.step(action=3)
+
+    # THEN
+    assert "Invalid action=3. Action must be a member of [0, 1]" in str(
+        exception_output.value
+    )
