@@ -61,3 +61,28 @@ def test_get_new_arms_reward_matches_when_same_seed(
 
     # THEN
     assert np.equal(primary_reward, secondary_reward) == True
+
+
+def test_reset_none_does_not_change_internal_seeding(
+    primary_env_seed_16: KArmEnvironment,
+):
+    # WHEN
+    old_arm_means = primary_env_seed_16.arm_means
+    primary_env_seed_16.reset()
+    new_arm_means = primary_env_seed_16.arm_means
+
+    # THEN
+    assert primary_env_seed_16.seed == 16
+    assert np.array_equal(old_arm_means, new_arm_means) == True
+
+
+def test_reset_new_does_change_internal_seeding(
+    primary_env_seed_16: KArmEnvironment, primary_env_seed_17: KArmEnvironment
+):
+    # WHEN
+    primary_env_seed_16.reset(seed=17)
+    reset_seed_16_arm_means = primary_env_seed_16.arm_means
+    seed_17_arm_means = primary_env_seed_17.arm_means
+
+    # THEN
+    assert np.array_equal(reset_seed_16_arm_means, seed_17_arm_means) == True

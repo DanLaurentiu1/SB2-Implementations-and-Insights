@@ -60,10 +60,11 @@ def test_reset(simple_bandit_environment: KArmEnvironment):
     # WHEN
     previous_arms = simple_bandit_environment.arm_means
     reset_observation, reset_information = simple_bandit_environment.reset()
+    current_arms = simple_bandit_environment.arm_means
 
     # THEN
     assert simple_bandit_environment.pulls == 0
-    assert np.array_equal(previous_arms, simple_bandit_environment.arm_means) == False
+    assert np.array_equal(previous_arms, current_arms) == True
     assert isinstance(reset_information, dict)
     assert isinstance(reset_observation, np.float64)
 
