@@ -1,16 +1,18 @@
 import pytest
 import numpy as np
-from environments.custom_envs.KArmEnvironment import KArmEnvironment
+from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
 from utils.exceptions.logic_exceptions import EnvironmentLogicException
 
 
 # GIVEN
 @pytest.fixture
-def simple_bandit_environment() -> KArmEnvironment:
-    return KArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
+def simple_bandit_environment() -> StationaryKArmEnvironment:
+    return StationaryKArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
 
 
-def test_environment_initialization(simple_bandit_environment: KArmEnvironment):
+def test_environment_initialization(
+    simple_bandit_environment: StationaryKArmEnvironment,
+):
     # WHEN
     number_of_arms = 2
     seed = 16
@@ -22,7 +24,7 @@ def test_environment_initialization(simple_bandit_environment: KArmEnvironment):
     assert simple_bandit_environment.max_steps == max_steps
 
 
-def test_get_info(simple_bandit_environment: KArmEnvironment):
+def test_get_info(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     optimal_arm_false = False
     optimal_arm_true = True
@@ -36,12 +38,12 @@ def test_get_info(simple_bandit_environment: KArmEnvironment):
     )
 
 
-def test_get_obs(simple_bandit_environment: KArmEnvironment):
+def test_get_obs(simple_bandit_environment: StationaryKArmEnvironment):
     # THEN
     assert isinstance(simple_bandit_environment._get_obs(), np.float64)
 
 
-def test_get_new_arms(simple_bandit_environment: KArmEnvironment):
+def test_get_new_arms(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     simple_bandit_environment._get_new_arms()
     optimal_arm_index = int(np.argmax(simple_bandit_environment.arm_means))
@@ -57,7 +59,7 @@ def test_get_new_arms(simple_bandit_environment: KArmEnvironment):
     assert 0 <= optimal_arm_index < simple_bandit_environment.number_of_arms
 
 
-def test_reset(simple_bandit_environment: KArmEnvironment):
+def test_reset(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     previous_arms = simple_bandit_environment.arm_means
     reset_observation, reset_information = simple_bandit_environment.reset()
@@ -70,7 +72,7 @@ def test_reset(simple_bandit_environment: KArmEnvironment):
     assert isinstance(reset_observation, np.float64)
 
 
-def test_step_output(simple_bandit_environment: KArmEnvironment):
+def test_step_output(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     step_obs, step_reward, step_terminated, step_truncated, step_info = (
         simple_bandit_environment.step(0)
@@ -82,7 +84,7 @@ def test_step_output(simple_bandit_environment: KArmEnvironment):
     assert isinstance(step_info, dict)
 
 
-def test_step_terminated(simple_bandit_environment: KArmEnvironment):
+def test_step_terminated(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     for _ in range(1, simple_bandit_environment.max_steps):
         assert simple_bandit_environment.terminated == False
@@ -93,7 +95,7 @@ def test_step_terminated(simple_bandit_environment: KArmEnvironment):
     assert step_terminated == True
 
 
-def test_step_reward_values(simple_bandit_environment: KArmEnvironment):
+def test_step_reward_values(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     for index, mean in enumerate(simple_bandit_environment.arm_means):
         _, reward, _, _, _ = simple_bandit_environment.step(index)
@@ -103,7 +105,7 @@ def test_step_reward_values(simple_bandit_environment: KArmEnvironment):
 
 
 def test_ensure_not_terminated_correctly_called(
-    simple_bandit_environment: KArmEnvironment,
+    simple_bandit_environment: StationaryKArmEnvironment,
 ):
     # WHEN
     for _ in range(simple_bandit_environment.max_steps):
@@ -120,7 +122,7 @@ def test_ensure_not_terminated_correctly_called(
 def test_validate_input_number_of_arms_invalid():
     # WHEN
     with pytest.raises(EnvironmentLogicException) as exception_output:
-        KArmEnvironment(number_of_arms=-1, seed=16, max_steps=10)
+        StationaryKArmEnvironment(number_of_arms=-1, seed=16, max_steps=10)
 
     # THEN
     assert (
@@ -132,7 +134,7 @@ def test_validate_input_number_of_arms_invalid():
 def test_validate_input_seed_invalid():
     # WHEN
     with pytest.raises(EnvironmentLogicException) as exception_output:
-        KArmEnvironment(number_of_arms=2, seed=-1, max_steps=10)
+        StationaryKArmEnvironment(number_of_arms=2, seed=-1, max_steps=10)
 
     # THEN
     assert "Invalid seed=-1. This number must be positive." in str(
@@ -143,7 +145,7 @@ def test_validate_input_seed_invalid():
 def test_validate_input_max_steps_invalid():
     # WHEN
     with pytest.raises(EnvironmentLogicException) as exception_output:
-        KArmEnvironment(number_of_arms=12, seed=16, max_steps=-1)
+        StationaryKArmEnvironment(number_of_arms=12, seed=16, max_steps=-1)
 
     # THEN
     assert (
@@ -152,7 +154,7 @@ def test_validate_input_max_steps_invalid():
     )
 
 
-def test_validate_action_invalid(simple_bandit_environment: KArmEnvironment):
+def test_validate_action_invalid(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     with pytest.raises(EnvironmentLogicException) as exception_output:
         simple_bandit_environment.step(action=3)

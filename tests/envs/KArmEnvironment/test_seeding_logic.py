@@ -1,31 +1,32 @@
 import pytest
 import numpy as np
-from environments.custom_envs.KArmEnvironment import KArmEnvironment
+from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
 
 
 # GIVEN
 @pytest.fixture
-def primary_env_seed_16() -> KArmEnvironment:
-    return KArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
+def primary_env_seed_16() -> StationaryKArmEnvironment:
+    return StationaryKArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
 
 
 @pytest.fixture
-def secondary_env_seed_16() -> KArmEnvironment:
-    return KArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
+def secondary_env_seed_16() -> StationaryKArmEnvironment:
+    return StationaryKArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
 
 
 @pytest.fixture
-def primary_env_seed_17() -> KArmEnvironment:
-    return KArmEnvironment(number_of_arms=2, seed=17, max_steps=10)
+def primary_env_seed_17() -> StationaryKArmEnvironment:
+    return StationaryKArmEnvironment(number_of_arms=2, seed=17, max_steps=10)
 
 
 @pytest.fixture
-def secondary_env_seed_17() -> KArmEnvironment:
-    return KArmEnvironment(number_of_arms=2, seed=17, max_steps=10)
+def secondary_env_seed_17() -> StationaryKArmEnvironment:
+    return StationaryKArmEnvironment(number_of_arms=2, seed=17, max_steps=10)
 
 
 def test_get_new_arms_match_when_same_seed(
-    primary_env_seed_16: KArmEnvironment, secondary_env_seed_16: KArmEnvironment
+    primary_env_seed_16: StationaryKArmEnvironment,
+    secondary_env_seed_16: StationaryKArmEnvironment,
 ):
     # WHEN
     primary_env_seed_16._get_new_arms()
@@ -39,7 +40,8 @@ def test_get_new_arms_match_when_same_seed(
 
 
 def test_get_new_arms_do_not_match_when_different_seed(
-    primary_env_seed_16: KArmEnvironment, primary_env_seed_17: KArmEnvironment
+    primary_env_seed_16: StationaryKArmEnvironment,
+    primary_env_seed_17: StationaryKArmEnvironment,
 ):
     # WHEN
     primary_env_seed_16._get_new_arms()
@@ -53,7 +55,8 @@ def test_get_new_arms_do_not_match_when_different_seed(
 
 
 def test_get_new_arms_reward_matches_when_same_seed(
-    primary_env_seed_16: KArmEnvironment, secondary_env_seed_16: KArmEnvironment
+    primary_env_seed_16: StationaryKArmEnvironment,
+    secondary_env_seed_16: StationaryKArmEnvironment,
 ):
     # WHEN
     _, primary_reward, _, _, _ = primary_env_seed_16.step(0)
@@ -64,7 +67,7 @@ def test_get_new_arms_reward_matches_when_same_seed(
 
 
 def test_reset_none_does_not_change_internal_seeding(
-    primary_env_seed_16: KArmEnvironment,
+    primary_env_seed_16: StationaryKArmEnvironment,
 ):
     # WHEN
     old_arm_means = primary_env_seed_16.arm_means
@@ -77,7 +80,8 @@ def test_reset_none_does_not_change_internal_seeding(
 
 
 def test_reset_new_does_change_internal_seeding(
-    primary_env_seed_16: KArmEnvironment, primary_env_seed_17: KArmEnvironment
+    primary_env_seed_16: StationaryKArmEnvironment,
+    primary_env_seed_17: StationaryKArmEnvironment,
 ):
     # WHEN
     primary_env_seed_16.reset(seed=17)

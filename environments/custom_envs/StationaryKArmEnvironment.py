@@ -6,7 +6,7 @@ from gymnasium.spaces import Discrete
 from utils.exceptions.logic_exceptions import EnvironmentLogicException
 
 
-class KArmEnvironment(Env):
+class StationaryKArmEnvironment(Env):
     def __init__(self, number_of_arms: int = 10, seed: int = 16, max_steps: int = 1000):
         self._validate_input(
             number_of_arms=number_of_arms, seed=seed, max_steps=max_steps
