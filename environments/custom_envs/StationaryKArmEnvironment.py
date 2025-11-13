@@ -81,7 +81,7 @@ class StationaryKArmEnvironment(Env):
         if self.pulls == self.max_steps:
             self.terminated = True
         is_optimal = action == self.optimal_arm
-        reward = self.np_random.normal(loc=self.arm_means[action], scale=1.0)
+        reward = float(self.np_random.normal(loc=self.arm_means[action], scale=1.0))
         return (
             self._get_obs(),
             reward,
