@@ -4,7 +4,7 @@ import numpy as np
 from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
 from gymnasium.utils.seeding import np_random
 
-from utils.logging.CSVLogger import CSVLogger
+from utils.logging.BaseLogger import BaseLogger
 
 
 class BanditAgent:
@@ -49,7 +49,7 @@ class BanditAgent:
         self.seed = new_seed
         self._reset_rng()
 
-    def run_episode(self, logger: CSVLogger, log_every: int = 1):
+    def run_episode(self, logger: BaseLogger, log_every: int = 1):
         self.env.reset()
 
         total_reward = 0.0
