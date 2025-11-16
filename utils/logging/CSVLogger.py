@@ -1,9 +1,11 @@
 from pathlib import Path
 import csv
-from typing import List
+from typing import Dict, List, Any
+
+from utils.logging.BaseLogger import BaseLogger
 
 
-class CSVLogger:
+class CSVLogger(BaseLogger):
     def __init__(
         self, directory: Path, columns: List[str], filename: str = "results.csv"
     ):
@@ -20,7 +22,7 @@ class CSVLogger:
             writer = csv.DictWriter(f, fieldnames=self.columns)
             writer.writeheader()
 
-    def log(self, row: dict[str, object]):
+    def log(self, row: Dict[str, Any]):
         with self.filepath.open("a", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=self.columns)
             writer.writerow(row)
