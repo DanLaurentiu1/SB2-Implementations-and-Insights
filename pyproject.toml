@@ -23,6 +23,12 @@ dependencies = [
     "black (>=25.11.0,<26.0.0)"
 ]
 
+[tool.poetry]
+packages = [
+    { include = "algorithms" },
+    { include = "environments" },
+    { include = "utils" }
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
