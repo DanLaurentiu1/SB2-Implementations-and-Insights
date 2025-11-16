@@ -1,8 +1,0 @@
-defaults:
-  - algorithm: other_placeholder
-  - environment: placeholder
-  - run: placeholder
-
-hydra:
-  run:
-    dir: .

@@ -1,0 +1,4 @@
+name: "many_to_many_test_run"
+episodes: 9
+agent_seeds: [16, 17, 18]
+env_seeds: [16, 17, 18]
