@@ -1,6 +1,7 @@
 from pathlib import Path
 
 
-def save_seed(seed: int, base: Path, file_name: str):
-    with open(base / file_name, "w") as f:
-        f.write(str(seed))
+def save_seed(agent_seed: int, env_seed: int, base: Path, file_name: str):
+    file_path = base / file_name
+    with file_path.open("a") as f:
+        f.write(f"{agent_seed},{env_seed}\n")
