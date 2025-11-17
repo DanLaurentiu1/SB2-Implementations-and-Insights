@@ -208,3 +208,7 @@ __marimo__/
 
 # hydra
 .hydra/
+multirun/
+
+# Any experiment log/output
+algorithms/bandits/experiments/
