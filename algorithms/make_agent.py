@@ -1,10 +1,10 @@
 import importlib
 from omegaconf import DictConfig
 
-from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
+from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 
 
-def make_agent(env_cfg: DictConfig, seed: int, env: StationaryKArmEnvironment):
+def make_agent(env_cfg: DictConfig, seed: int, env: BaseBanditEnv):
     module_path = env_cfg["module"]
     class_name = env_cfg["class_name"]
     params = env_cfg["params"]

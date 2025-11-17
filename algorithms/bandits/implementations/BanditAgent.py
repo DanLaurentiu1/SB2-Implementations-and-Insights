@@ -1,7 +1,8 @@
 from typing import List
 
+from gymnasium import Env
 import numpy as np
-from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
+from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 from gymnasium.utils.seeding import np_random
 
 from utils.logging.BaseLogger import BaseLogger
@@ -10,7 +11,7 @@ from utils.logging.BaseLogger import BaseLogger
 class BanditAgent:
     def __init__(
         self,
-        env: StationaryKArmEnvironment,
+        env: BaseBanditEnv,
         epsillon: float,
         seed: int,
         metrics: List[str],
