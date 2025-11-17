@@ -7,7 +7,7 @@ from utils.logging.BaseLogger import BaseLogger
 
 class CSVLogger(BaseLogger):
     def __init__(
-        self, directory: Path, columns: List[str], filename: str = "results.csv"
+        self, directory: Path, columns: List[str], filename: str = "?_?_results.csv"
     ):
         if not columns:
             raise ValueError("`columns` must be a non-empty list of column names.")

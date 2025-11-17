@@ -7,10 +7,6 @@ def make_experiment_directory(base_path: Path, name: str) -> Path:
     folder_name = f"{name}_{date_str}"
 
     experiment_path = base_path / folder_name
-    counter = 1
-    while experiment_path.exists():
-        counter += 1
-        experiment_path = base_path / f"{folder_name}_{counter}"
 
-    experiment_path.mkdir()
+    experiment_path.mkdir(exist_ok=True)
     return experiment_path

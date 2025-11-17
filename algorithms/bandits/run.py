@@ -9,25 +9,30 @@ from hydra import main
 from utils.logging.CSVLogger import CSVLogger
 
 ROOT = Path(__file__).parent.resolve()
+EXPERIMENTS_BASE = ROOT / "experiments"
 
 
 @main(config_path="configs", config_name="default", version_base=None)
 def run(cfg: DictConfig):
-    experiments_base = ROOT / "experiments"
     run_name = cfg["run"]["name"]
-    experiment_directory = make_experiment_directory(experiments_base, run_name)
+    experiment_directory = make_experiment_directory(EXPERIMENTS_BASE, run_name)
 
-    agent_seed = cfg["run"]["agent_seeds"]
-    env_seed = cfg["run"]["env_seeds"]
+    agent_seed = int(cfg["run"]["agent_seed"])
+    env_seed = int(cfg["run"]["env_seed"])
     env = make_env(cfg["environment"], seed=env_seed)
     agent = make_agent(cfg["algorithm"], seed=agent_seed, env=env)
 
-    logger = CSVLogger(directory=experiment_directory, columns=agent.get_metrics())
+    logger = CSVLogger(
+        directory=experiment_directory,
+        columns=agent.get_metrics(),
+        filename=f"{agent_seed}_{env_seed}_results.csv",
+    )
 
     episodes = int(cfg["run"]["episodes"])
     for _ in range(episodes):
-        agent.run_episode(env, logger=logger, log_every=1)
-    print("Run finished. Results in:", experiment_directory)
+        agent.run_episode(logger=logger, log_every=1)
+
+    print(f"Run finished. Results in: {experiment_directory}\n")
 
 
 if __name__ == "__main__":
