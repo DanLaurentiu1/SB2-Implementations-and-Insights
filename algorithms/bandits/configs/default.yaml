@@ -1,7 +1,7 @@
 defaults:
   - algorithm: Bandit_0.1Eps
   - environment: 10ArmTestBed
-  - run: ShortTestRun
+  - run: TestRun
 
 hydra:
   run:

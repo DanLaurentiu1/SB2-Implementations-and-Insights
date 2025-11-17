@@ -1,4 +1,0 @@
-name: "singular_test_run"
-episodes: 1
-agent_seeds: [16]
-env_seeds: [16]
