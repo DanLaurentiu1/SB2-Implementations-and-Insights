@@ -1,6 +1,8 @@
 import pytest
 import numpy as np
-from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
+from environments.custom_envs.BanditEnvs.StationaryKArmEnvironment import (
+    StationaryKArmEnvironment,
+)
 
 
 # GIVEN
@@ -34,7 +36,7 @@ def test_get_new_arms_match_when_same_seed(
 
     # THEN
     assert (
-        np.array_equal(primary_env_seed_16.arm_means, secondary_env_seed_16.arm_means)
+        np.array_equal(primary_env_seed_16._arm_means, secondary_env_seed_16._arm_means)
         == True
     )
 
@@ -49,7 +51,7 @@ def test_get_new_arms_do_not_match_when_different_seed(
 
     # THEN
     assert (
-        np.array_equal(primary_env_seed_16.arm_means, primary_env_seed_17.arm_means)
+        np.array_equal(primary_env_seed_16._arm_means, primary_env_seed_17._arm_means)
         == False
     )
 
@@ -70,12 +72,12 @@ def test_reset_none_does_not_change_internal_seeding(
     primary_env_seed_16: StationaryKArmEnvironment,
 ):
     # WHEN
-    old_arm_means = primary_env_seed_16.arm_means
+    old_arm_means = primary_env_seed_16._arm_means
     primary_env_seed_16.reset()
-    new_arm_means = primary_env_seed_16.arm_means
+    new_arm_means = primary_env_seed_16._arm_means
 
     # THEN
-    assert primary_env_seed_16.seed == 16
+    assert primary_env_seed_16._seed == 16
     assert np.array_equal(old_arm_means, new_arm_means) == True
 
 
@@ -85,8 +87,8 @@ def test_reset_new_does_change_internal_seeding(
 ):
     # WHEN
     primary_env_seed_16.reset(seed=17)
-    reset_seed_16_arm_means = primary_env_seed_16.arm_means
-    seed_17_arm_means = primary_env_seed_17.arm_means
+    reset_seed_16_arm_means = primary_env_seed_16._arm_means
+    seed_17_arm_means = primary_env_seed_17._arm_means
 
     # THEN
     assert np.array_equal(reset_seed_16_arm_means, seed_17_arm_means) == True

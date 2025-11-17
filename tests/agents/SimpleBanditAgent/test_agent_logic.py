@@ -3,7 +3,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 from algorithms.bandits.implementations.BanditAgent import BanditAgent
-from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
+from environments.custom_envs.BanditEnvs.StationaryKArmEnvironment import (
+    StationaryKArmEnvironment,
+)
 from utils.logging.FakeLogger import FakeLogger
 
 
@@ -47,10 +49,10 @@ def test_constructor_initializes_fields(
     ]
     assert agent.n_arms == 3
     assert isinstance(agent.q_values, np.ndarray)
-    assert agent.q_values.shape[0] == simple_env.number_of_arms
+    assert agent.q_values.shape[0] == simple_env._number_of_arms
     assert np.all(agent.q_values == 0)
     assert isinstance(agent.action_freq, np.ndarray)
-    assert agent.action_freq.shape[0] == simple_env.number_of_arms
+    assert agent.action_freq.shape[0] == simple_env._number_of_arms
     assert np.all(agent.action_freq == 0)
 
 
@@ -108,7 +110,7 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
     assert "episode_reward" in out
     assert "steps" in out
     assert "optimal_chosen_percentage" in out
-    assert len(logger.rows) == agent.env.max_steps
+    assert len(logger.rows) == agent.env._max_steps
 
     # WHEN
     first_row = logger.rows[0]

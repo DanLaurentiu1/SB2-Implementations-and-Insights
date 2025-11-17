@@ -1,6 +1,8 @@
 import pytest
 import numpy as np
-from environments.custom_envs.StationaryKArmEnvironment import StationaryKArmEnvironment
+from environments.custom_envs.BanditEnvs.StationaryKArmEnvironment import (
+    StationaryKArmEnvironment,
+)
 from utils.exceptions.logic_exceptions import EnvironmentLogicException
 
 
@@ -19,9 +21,9 @@ def test_environment_initialization(
     max_steps = 10
 
     # THEN
-    assert simple_bandit_environment.number_of_arms == number_of_arms
-    assert simple_bandit_environment.seed == seed
-    assert simple_bandit_environment.max_steps == max_steps
+    assert simple_bandit_environment._number_of_arms == number_of_arms
+    assert simple_bandit_environment._seed == seed
+    assert simple_bandit_environment._max_steps == max_steps
 
 
 def test_get_info(simple_bandit_environment: StationaryKArmEnvironment):
@@ -46,27 +48,27 @@ def test_get_obs(simple_bandit_environment: StationaryKArmEnvironment):
 def test_get_new_arms(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
     simple_bandit_environment._get_new_arms()
-    optimal_arm_index = int(np.argmax(simple_bandit_environment.arm_means))
+    optimal_arm_index = int(np.argmax(simple_bandit_environment._arm_means))
 
     # THEN
-    assert isinstance(simple_bandit_environment.arm_means, np.ndarray)
-    assert isinstance(simple_bandit_environment.arm_means[0], np.float64)
+    assert isinstance(simple_bandit_environment._arm_means, np.ndarray)
+    assert isinstance(simple_bandit_environment._arm_means[0], np.float64)
     assert (
-        len(simple_bandit_environment.arm_means)
-        == simple_bandit_environment.number_of_arms
+        len(simple_bandit_environment._arm_means)
+        == simple_bandit_environment._number_of_arms
     )
-    assert optimal_arm_index == simple_bandit_environment.optimal_arm
-    assert 0 <= optimal_arm_index < simple_bandit_environment.number_of_arms
+    assert optimal_arm_index == simple_bandit_environment._optimal_arm
+    assert 0 <= optimal_arm_index < simple_bandit_environment._number_of_arms
 
 
 def test_reset(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
-    previous_arms = simple_bandit_environment.arm_means
+    previous_arms = simple_bandit_environment._arm_means
     reset_observation, reset_information = simple_bandit_environment.reset()
-    current_arms = simple_bandit_environment.arm_means
+    current_arms = simple_bandit_environment._arm_means
 
     # THEN
-    assert simple_bandit_environment.pulls == 0
+    assert simple_bandit_environment._pulls == 0
     assert np.array_equal(previous_arms, current_arms) == True
     assert isinstance(reset_information, dict)
     assert isinstance(reset_observation, np.float64)
@@ -86,8 +88,8 @@ def test_step_output(simple_bandit_environment: StationaryKArmEnvironment):
 
 def test_step_terminated(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
-    for _ in range(1, simple_bandit_environment.max_steps):
-        assert simple_bandit_environment.terminated == False
+    for _ in range(1, simple_bandit_environment._max_steps):
+        assert simple_bandit_environment._terminated == False
         simple_bandit_environment.step(0)
     _, _, step_terminated, _, _ = simple_bandit_environment.step(0)
 
@@ -97,7 +99,7 @@ def test_step_terminated(simple_bandit_environment: StationaryKArmEnvironment):
 
 def test_step_reward_values(simple_bandit_environment: StationaryKArmEnvironment):
     # WHEN
-    for index, mean in enumerate(simple_bandit_environment.arm_means):
+    for index, mean in enumerate(simple_bandit_environment._arm_means):
         _, reward, _, _, _ = simple_bandit_environment.step(index)
 
         # THEN
@@ -108,7 +110,7 @@ def test_ensure_not_terminated_correctly_called(
     simple_bandit_environment: StationaryKArmEnvironment,
 ):
     # WHEN
-    for _ in range(simple_bandit_environment.max_steps):
+    for _ in range(simple_bandit_environment._max_steps):
         simple_bandit_environment.step(0)
 
     # THEN
