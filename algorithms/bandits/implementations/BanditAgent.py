@@ -1,14 +1,14 @@
 from typing import List
 
-from gymnasium import Env
 import numpy as np
+from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 from gymnasium.utils.seeding import np_random
 
 from utils.logging.BaseLogger import BaseLogger
 
 
-class BanditAgent:
+class BanditAgent(BaseBanditAgent):
     def __init__(
         self,
         env: BaseBanditEnv,
