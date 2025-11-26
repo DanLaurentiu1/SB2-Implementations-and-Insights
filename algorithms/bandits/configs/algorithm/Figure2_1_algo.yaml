@@ -1,0 +1,11 @@
+module: algorithms.bandits.implementations.BanditAgent
+class_name: BanditAgent
+params:
+  epsillon: 0.1
+  metrics:
+  - step
+  - action
+  - reward
+  - total_reward
+  - average_reward
+  - optimal_chosen_percentage
