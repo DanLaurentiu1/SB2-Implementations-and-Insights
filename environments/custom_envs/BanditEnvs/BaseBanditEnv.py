@@ -11,6 +11,11 @@ class BaseBanditEnv(ABC):
 
     @property
     @abstractmethod
+    def arm_means(self) -> np.ndarray:
+        pass
+
+    @property
+    @abstractmethod
     def max_steps(self) -> int:
         pass
 
