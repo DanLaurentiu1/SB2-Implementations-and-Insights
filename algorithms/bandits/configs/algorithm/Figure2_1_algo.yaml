@@ -1,7 +1,7 @@
 module: algorithms.bandits.implementations.BanditAgent
 class_name: BanditAgent
 params:
-  epsillon: 0.1
+  epsilon: 0.1
   metrics:
   - step
   - action
