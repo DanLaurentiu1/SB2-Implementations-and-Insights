@@ -41,3 +41,7 @@ class BaseBanditEnv(ABC):
     @abstractmethod
     def step(self, action: int):
         pass
+
+    @abstractmethod
+    def __str__(self):
+        pass

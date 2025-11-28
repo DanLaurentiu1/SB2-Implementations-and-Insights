@@ -114,3 +114,6 @@ class StationaryKArmEnvironment(Env, BaseBanditEnv):
             self._truncated,
             self._get_info(optimal_arm_chosen=is_optimal),
         )
+
+    def __str__(self):
+        return f"StationaryKArmEnv(seed={self.seed}, arms={self.number_of_arms})"
