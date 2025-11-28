@@ -1,0 +1,24 @@
+algorithm:
+  module: algorithms.bandits.implementations.BanditAgent
+  class_name: BanditAgent
+  params:
+    epsilon: 0.1
+    metrics:
+    - step
+    - action
+    - reward
+    - total_reward
+    - average_reward
+    - optimal_chosen_percentage
+environment:
+  module: environments.custom_envs.BanditEnvs.StationaryKArmEnvironment
+  class_name: StationaryKArmEnvironment
+  params:
+    number_of_arms: 10
+    max_steps: 1000
+run:
+  name: Figure2_2_repro
+  episodes: 1
+  agent_seed: 26
+  env_seed: 36
+repro_folder_name: Figure2_2
