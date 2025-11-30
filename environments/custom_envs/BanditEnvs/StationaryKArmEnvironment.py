@@ -67,6 +67,10 @@ class StationaryKArmEnvironment(Env, BaseBanditEnv):
         return self._number_of_arms
 
     @property
+    def arm_means(self) -> np.ndarray:
+        return self._arm_means
+
+    @property
     def max_steps(self) -> int:
         return self._max_steps
 
@@ -110,3 +114,6 @@ class StationaryKArmEnvironment(Env, BaseBanditEnv):
             self._truncated,
             self._get_info(optimal_arm_chosen=is_optimal),
         )
+
+    def __str__(self):
+        return f"StationaryKArmEnv(seed={self.seed}, arms={self.number_of_arms})"

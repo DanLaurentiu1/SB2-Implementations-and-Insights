@@ -12,3 +12,7 @@ class BaseBanditAgent(ABC):
     @abstractmethod
     def get_metrics() -> List[str]:
         pass
+
+    @abstractmethod
+    def __str__(self):
+        pass

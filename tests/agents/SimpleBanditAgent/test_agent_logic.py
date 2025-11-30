@@ -19,7 +19,7 @@ def simple_env() -> StationaryKArmEnvironment:
 def agent(simple_env: StationaryKArmEnvironment) -> BanditAgent:
     return BanditAgent(
         env=simple_env,
-        epsillon=0.1,
+        epsilon=0.1,
         seed=16,
         metrics=[
             "step",
@@ -37,7 +37,7 @@ def test_constructor_initializes_fields(
 ):
     # THEN
     assert agent.env is simple_env
-    assert agent.epsillon == pytest.approx(0.1)
+    assert agent.epsilon == pytest.approx(0.1)
     assert agent.seed == 16
     assert agent.metrics == [
         "step",
@@ -127,7 +127,7 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
 def test_pick_action(agent: BanditAgent):
     # WHEN
     agent.q_values = np.array([2.0, 1.0, 0.0])
-    agent.epsillon = 0.0
+    agent.epsilon = 0.0
     action_greedy = agent._pick_action()
 
     # THEN

@@ -12,12 +12,12 @@ class BanditAgent(BaseBanditAgent):
     def __init__(
         self,
         env: BaseBanditEnv,
-        epsillon: float,
+        epsilon: float,
         seed: int,
         metrics: List[str],
     ):
         self.env = env
-        self.epsillon = epsillon
+        self.epsilon = epsilon
         self.seed = seed
         self.metrics = metrics
         self.n_arms = self.env.number_of_arms
@@ -37,7 +37,7 @@ class BanditAgent(BaseBanditAgent):
         )
 
     def _pick_action(self):
-        if self.np_random.random() < self.epsillon:
+        if self.np_random.random() < self.epsilon:
             action = int(self.env.action_space.sample())
         else:
             action = int(np.argmax(self.q_values))
@@ -86,3 +86,6 @@ class BanditAgent(BaseBanditAgent):
                 optimal_chosen_counter / total_steps if total_steps else 0.0
             ),
         }
+
+    def __str__(self):
+        return f"Agent(seed={self.seed}, eps={self.epsilon})"

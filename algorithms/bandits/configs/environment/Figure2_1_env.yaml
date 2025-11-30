@@ -1,0 +1,5 @@
+module: environments.custom_envs.BanditEnvs.StationaryKArmEnvironment
+class_name: StationaryKArmEnvironment
+params:
+  number_of_arms: 10
+  max_steps: 1000

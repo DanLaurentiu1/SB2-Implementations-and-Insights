@@ -1,4 +1,4 @@
-name: "test_run"
+name: "Figure_2.1_repro_run"
 episodes: 1
 agent_seed: 16
 env_seed: 16
