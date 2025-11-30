@@ -19,6 +19,6 @@ environment:
 run:
   name: Figure2_2_repro
   episodes: 1
-  agent_seed: 26
-  env_seed: 36
+  agent_seed: 36
+  env_seed: 216
 repro_folder_name: Figure2_2
