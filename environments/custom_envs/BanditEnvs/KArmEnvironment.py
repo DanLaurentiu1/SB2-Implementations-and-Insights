@@ -1,14 +1,26 @@
+from typing import Optional
 import numpy as np
 from gymnasium.utils.seeding import np_random
 from gymnasium import Env, Space
 from gymnasium.spaces import Discrete
 
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
+from environments.custom_envs.BanditEnvs.drift.NoDrift import NoDrift
+from environments.custom_envs.BanditEnvs.drift.DriftStrategy import DriftStrategy
+from environments.custom_envs.BanditEnvs.reward.GaussianReward import GaussianReward
+from environments.custom_envs.BanditEnvs.reward.RewardStrategy import RewardStrategy
 from utils.exceptions.logic_exceptions import EnvironmentLogicException
 
 
-class StationaryKArmEnvironment(Env, BaseBanditEnv):
-    def __init__(self, number_of_arms: int = 10, seed: int = 16, max_steps: int = 1000):
+class KArmEnvironment(Env, BaseBanditEnv):
+    def __init__(
+        self,
+        number_of_arms: int = 10,
+        seed: int = 16,
+        max_steps: int = 1000,
+        drift_strategy: Optional[DriftStrategy] = None,
+        reward_strategy: Optional[RewardStrategy] = None,
+    ):
         self._validate_input(
             number_of_arms=number_of_arms, seed=seed, max_steps=max_steps
         )
@@ -22,6 +34,17 @@ class StationaryKArmEnvironment(Env, BaseBanditEnv):
         self._np_random, _ = np_random(self._seed)
         self._observation_space = Discrete(1, seed=self._seed)
         self._action_space = Discrete(n=self._number_of_arms, seed=self._seed, start=0)
+
+        if not drift_strategy:
+            self._drift_stategy = NoDrift()
+        else:
+            self._drift_stategy = drift_strategy
+
+        if not reward_strategy:
+            self._reward_strategy = GaussianReward()
+        else:
+            self._reward_strategy = drift_strategy
+
         self._get_new_arms()
 
     def _get_new_arms(self):
@@ -102,11 +125,21 @@ class StationaryKArmEnvironment(Env, BaseBanditEnv):
         self._ensure_not_terminated()
         self._validate_action(action=action)
 
+        reward = float(
+            self._reward_strategy.get_reward(
+                arm_mean=self._arm_means[action], rng=self._np_random
+            )
+        )
         self._pulls += 1
         if self._pulls == self._max_steps:
             self._terminated = True
         is_optimal = action == self._optimal_arm
-        reward = float(self._np_random.normal(loc=self._arm_means[action], scale=1.0))
+
+        self._arm_means = self._drift_stategy.drift(
+            arm_means=self._arm_means, rng=self._np_random
+        )
+        self._optimal_arm = np.argmax(self._arm_means)
+
         return (
             self._get_obs(),
             reward,

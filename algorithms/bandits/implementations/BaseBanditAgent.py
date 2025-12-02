@@ -6,11 +6,11 @@ from utils.logging.BaseLogger import BaseLogger
 
 class BaseBanditAgent(ABC):
     @abstractmethod
-    def run_episode(logger: BaseLogger, log_every: int) -> None:
+    def run_episode(self, logger: BaseLogger, log_every: int) -> None:
         pass
 
     @abstractmethod
-    def get_metrics() -> List[str]:
+    def get_metrics(self) -> List[str]:
         pass
 
     @abstractmethod

@@ -3,9 +3,7 @@ from environments.custom_envs.BanditEnvs.drift.DriftStrategy import DriftStrateg
 
 
 class NoDrift(DriftStrategy):
-    def drift(self, arm_means: np.ndarray) -> np.ndarray:
-        # drifts = rng.normal(loc=self._mean, scale=self._variance, size=arm_means.size)
-        # return arm_means + drifts
+    def drift(self, arm_means: np.ndarray, rng: np.random.Generator) -> np.ndarray:
         return arm_means
 
     def reset(self):
