@@ -3,6 +3,10 @@ omit =
     */__init__.py
     tests/*
     utlis/*
+    environments/custom_envs/BanditEnvs/drift/DriftStrategy.py
+    environments/custom_envs/BanditEnvs/reward/RewardStrategy.py
+    algorithms/bandits/implementations/BaseBanditAgent.py
+    environments/custom_envs/BanditEnvs/BaseBanditEnv.py
 branch = True
 
 [report]
