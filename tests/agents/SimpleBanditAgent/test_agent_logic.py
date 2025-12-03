@@ -3,20 +3,20 @@ from pathlib import Path
 import numpy as np
 import pytest
 from algorithms.bandits.implementations.BanditAgent import BanditAgent
-from environments.custom_envs.BanditEnvs.StationaryKArmEnvironment import (
-    StationaryKArmEnvironment,
+from environments.custom_envs.BanditEnvs.KArmEnvironment import (
+    KArmEnvironment,
 )
 from utils.logging.FakeLogger import FakeLogger
 
 
 # GIVEN
 @pytest.fixture
-def simple_env() -> StationaryKArmEnvironment:
-    return StationaryKArmEnvironment(number_of_arms=3, seed=16, max_steps=5)
+def simple_env() -> KArmEnvironment:
+    return KArmEnvironment(number_of_arms=3, seed=16, max_steps=5)
 
 
 @pytest.fixture
-def agent(simple_env: StationaryKArmEnvironment) -> BanditAgent:
+def agent(simple_env: KArmEnvironment) -> BanditAgent:
     return BanditAgent(
         env=simple_env,
         epsilon=0.1,
@@ -33,7 +33,7 @@ def agent(simple_env: StationaryKArmEnvironment) -> BanditAgent:
 
 
 def test_constructor_initializes_fields(
-    agent: BanditAgent, simple_env: StationaryKArmEnvironment
+    agent: BanditAgent, simple_env: KArmEnvironment
 ):
     # THEN
     assert agent.env is simple_env
