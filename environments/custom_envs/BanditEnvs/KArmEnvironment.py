@@ -43,7 +43,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
         if not reward_strategy:
             self._reward_strategy = GaussianReward()
         else:
-            self._reward_strategy = drift_strategy
+            self._reward_strategy = reward_strategy
 
         self._get_new_arms()
 
@@ -102,6 +102,10 @@ class KArmEnvironment(Env, BaseBanditEnv):
         return self._seed
 
     @property
+    def optimal_arm(self) -> int:
+        return self._optimal_arm
+
+    @property
     def action_space(self) -> Space:
         return self._action_space
 
@@ -149,4 +153,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
         )
 
     def __str__(self):
-        return f"StationaryKArmEnv(seed={self.seed}, arms={self.number_of_arms})"
+        return f"KArmEnv(seed={self.seed}, arms={self.number_of_arms})"
+
+    def __repr__(self):
+        return f"KArmEnv(drift={self._drift_stategy.__class__.__name__}, reward={self._reward_strategy.__class__.__name__}, seed={self.seed}, arms={self.number_of_arms})"
