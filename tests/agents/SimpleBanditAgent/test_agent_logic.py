@@ -3,20 +3,21 @@ from pathlib import Path
 import numpy as np
 import pytest
 from algorithms.bandits.implementations.BanditAgent import BanditAgent
-from environments.custom_envs.BanditEnvs.StationaryKArmEnvironment import (
-    StationaryKArmEnvironment,
+from environments.custom_envs.BanditEnvs.KArmEnvironment import (
+    KArmEnvironment,
 )
 from utils.logging.FakeLogger import FakeLogger
 
 
 # GIVEN
 @pytest.fixture
-def simple_env() -> StationaryKArmEnvironment:
-    return StationaryKArmEnvironment(number_of_arms=3, seed=16, max_steps=5)
+def simple_env() -> KArmEnvironment:
+    return KArmEnvironment(number_of_arms=3, seed=16, max_steps=5)
 
 
+# GIVEN
 @pytest.fixture
-def agent(simple_env: StationaryKArmEnvironment) -> BanditAgent:
+def agent(simple_env: KArmEnvironment) -> BanditAgent:
     return BanditAgent(
         env=simple_env,
         epsilon=0.1,
@@ -32,8 +33,14 @@ def agent(simple_env: StationaryKArmEnvironment) -> BanditAgent:
     )
 
 
+# GIVEN
+@pytest.fixture
+def full_run_values_json_path() -> Path:
+    return Path(__file__).parent / "agent_16_behaviour_values.json"
+
+
 def test_constructor_initializes_fields(
-    agent: BanditAgent, simple_env: StationaryKArmEnvironment
+    agent: BanditAgent, simple_env: KArmEnvironment
 ):
     # THEN
     assert agent.env is simple_env
@@ -49,19 +56,19 @@ def test_constructor_initializes_fields(
     ]
     assert agent.n_arms == 3
     assert isinstance(agent.q_values, np.ndarray)
-    assert agent.q_values.shape[0] == simple_env._number_of_arms
+    assert agent.q_values.shape[0] == simple_env.number_of_arms
     assert np.all(agent.q_values == 0)
     assert isinstance(agent.action_freq, np.ndarray)
-    assert agent.action_freq.shape[0] == simple_env._number_of_arms
+    assert agent.action_freq.shape[0] == simple_env.number_of_arms
     assert np.all(agent.action_freq == 0)
 
 
 def test_set_seed_changes_rng_state(agent: BanditAgent):
     # WHEN
     random_1 = agent.np_random.random()
-    agent.set_seed(42)
+    agent._set_seed(42)
     random_2 = agent.np_random.random()
-    agent.set_seed(42)
+    agent._set_seed(42)
     random_3 = agent.np_random.random()
 
     # THEN
@@ -81,7 +88,7 @@ def test_get_metrics(agent: BanditAgent):
     ]
 
     # THEN
-    assert agent.get_metrics() == metrics
+    assert agent.metrics == metrics
 
 
 def test_update_action_values(agent: BanditAgent):
@@ -110,7 +117,7 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
     assert "episode_reward" in out
     assert "steps" in out
     assert "optimal_chosen_percentage" in out
-    assert len(logger.rows) == agent.env._max_steps
+    assert len(logger.rows) == agent.env.max_steps
 
     # WHEN
     first_row = logger.rows[0]
@@ -126,22 +133,22 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
 
 def test_pick_action(agent: BanditAgent):
     # WHEN
-    agent.q_values = np.array([2.0, 1.0, 0.0])
-    agent.epsilon = 0.0
+    agent._q_values = np.array([2.0, 1.0, 0.0])
+    agent._env = 0.0
     action_greedy = agent._pick_action()
 
     # THEN
     assert action_greedy == 0
 
     # WHEN
-    agent.q_values = np.array([-2.0, 1.0, 0.0])
+    agent._q_values = np.array([-2.0, 1.0, 0.0])
     action_greedy = agent._pick_action()
 
     # THEN
     assert action_greedy == 1
 
 
-def test_full_run(agent: BanditAgent):
+def test_full_run(agent: BanditAgent, full_run_values_json_path: Path):
     # WHEN
     logger = FakeLogger()
 
@@ -175,8 +182,7 @@ def test_full_run(agent: BanditAgent):
 
         logger.log(row=row)
 
-    json_path = Path("tests/agents/SimpleBanditAgent/agent_16_behaviour_values.json")
-    with json_path.open("r") as f:
+    with full_run_values_json_path.open("r") as f:
         expected_rows = json.load(f)
 
     # THEN

@@ -1,0 +1,25 @@
+import numpy as np
+
+from environments.custom_envs.BanditEnvs.reward.RewardStrategy import RewardStrategy
+from utils.exceptions.logic_exceptions import RewardLogicException
+
+
+class GaussianReward(RewardStrategy):
+    def __init__(self, variance: np.float64 = 1.0):
+        self._validate_input(variance=variance)
+
+        self._variance = variance
+
+    def _validate_input(self, variance: np.float64):
+        max_float = np.finfo(np.float64).max
+        if variance < 0:
+            raise RewardLogicException(
+                f"Invalid variance={variance}. Variance cannot be negative."
+            )
+        if not np.isfinite(variance) or abs(variance) >= max_float:
+            raise RewardLogicException(
+                f"Invalid variance={variance}. Variance must be finite and within ±{max_float}."
+            )
+
+    def get_reward(self, arm_mean: np.float64, rng: np.random.Generator) -> np.float64:
+        return rng.normal(loc=arm_mean, scale=self._variance)

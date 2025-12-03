@@ -16,42 +16,54 @@ class BanditAgent(BaseBanditAgent):
         seed: int,
         metrics: List[str],
     ):
-        self.env = env
-        self.epsilon = epsilon
-        self.seed = seed
-        self.metrics = metrics
-        self.n_arms = self.env.number_of_arms
-        self.q_values = np.zeros(shape=self.n_arms)
-        self.action_freq = np.zeros(shape=self.n_arms, dtype=int)
+        self._env: BaseBanditEnv = env
+        self._epsilon: float = epsilon
+        self._seed: int = seed
+        self._metrics: List[str] = metrics
+        self._n_arms: int = self._env.number_of_arms
+        self._q_values: np.ndarray = np.zeros(shape=self._n_arms)
+        self._action_freq: np.ndarray = np.zeros(shape=self._n_arms, dtype=int)
 
         self._reset_rng()
 
-    def _reset_rng(self):
-        self.np_random, _ = np_random(self.seed)
+    # ==============
+    # Properties
+    # ==============
 
-    def _update_action_value(self, action: int, reward: float):
-        self.action_freq[action] += 1
-        old_q_values = self.q_values[action]
-        self.q_values[action] = old_q_values + (
-            (1 / self.action_freq[action]) * (reward - old_q_values)
-        )
+    @property
+    def env(self) -> BaseBanditEnv:
+        return self._env
 
-    def _pick_action(self):
-        if self.np_random.random() < self.epsilon:
-            action = int(self.env.action_space.sample())
-        else:
-            action = int(np.argmax(self.q_values))
-        return action
+    @property
+    def metrics(self) -> List[str]:
+        return self._metrics
 
-    def get_metrics(self):
-        return self.metrics
+    @property
+    def epsilon(self) -> float:
+        return self._epsilon
 
-    def set_seed(self, new_seed: int):
-        self.seed = new_seed
-        self._reset_rng()
+    @property
+    def seed(self) -> int:
+        return self._seed
+
+    @property
+    def n_arms(self) -> int:
+        return self._n_arms
+
+    @property
+    def q_values(self) -> np.ndarray:
+        return self._q_values
+
+    @property
+    def action_freq(self) -> np.ndarray:
+        return self._action_freq
+
+    # ==============
+    # Public API
+    # ==============
 
     def run_episode(self, logger: BaseLogger, log_every: int = 1):
-        self.env.reset()
+        self._env.reset()
 
         total_reward = 0.0
         optimal_chosen_counter = total_steps = 0
@@ -60,7 +72,7 @@ class BanditAgent(BaseBanditAgent):
         while not terminated and not truncated:
             action = self._pick_action()
 
-            _, reward, terminated, truncated, info = self.env.step(action=action)
+            _, reward, terminated, truncated, info = self._env.step(action=action)
             self._update_action_value(action=action, reward=reward)
 
             total_reward += reward
@@ -87,5 +99,30 @@ class BanditAgent(BaseBanditAgent):
             ),
         }
 
+    # ==============
+    # Internals
+    # ==============
+
+    def _reset_rng(self):
+        self.np_random, _ = np_random(self._seed)
+
+    def _update_action_value(self, action: int, reward: float):
+        self._action_freq[action] += 1
+        old_q_values = self._q_values[action]
+        self._q_values[action] = old_q_values + (
+            (1 / self._action_freq[action]) * (reward - old_q_values)
+        )
+
+    def _pick_action(self):
+        if self.np_random.random() < self._epsilon:
+            action = int(self._env.action_space.sample())
+        else:
+            action = int(np.argmax(self._q_values))
+        return action
+
+    def _set_seed(self, new_seed: int):
+        self._seed = new_seed
+        self._reset_rng()
+
     def __str__(self):
-        return f"Agent(seed={self.seed}, eps={self.epsilon})"
+        return f"Agent(seed={self._seed}, eps={self._epsilon})"

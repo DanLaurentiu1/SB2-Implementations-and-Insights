@@ -26,6 +26,11 @@ class BaseBanditEnv(ABC):
 
     @property
     @abstractmethod
+    def optimal_arm(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
     def action_space(self) -> Space:
         pass
 
