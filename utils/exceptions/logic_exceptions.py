@@ -11,3 +11,8 @@ class EnvironmentLogicException(LogicException):
 class DriftingLogicException(LogicException):
     def __init__(self, message: str):
         super().__init__(f"[DriftingLogicException] {message}")
+
+
+class RewardLogicException(LogicException):
+    def __init__(self, message: str):
+        super().__init__(f"[RewardLogicException] {message}")
