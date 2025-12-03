@@ -24,7 +24,7 @@ def run(cfg: DictConfig):
 
     logger = CSVLogger(
         directory=experiment_directory,
-        columns=agent.get_metrics(),
+        columns=agent.metrics,
         filename=f"{agent}_{env}_results.csv",
     )
 

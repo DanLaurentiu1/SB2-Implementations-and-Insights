@@ -67,18 +67,18 @@ def test_get_new_arms(stationary_env: KArmEnvironment):
     optimal_arm_index = int(np.argmax(stationary_env._arm_means))
 
     # THEN
-    assert isinstance(stationary_env._arm_means, np.ndarray)
-    assert isinstance(stationary_env._arm_means[0], np.float64)
-    assert len(stationary_env._arm_means) == stationary_env._number_of_arms
-    assert optimal_arm_index == stationary_env._optimal_arm
-    assert 0 <= optimal_arm_index < stationary_env._number_of_arms
+    assert isinstance(stationary_env.arm_means, np.ndarray)
+    assert isinstance(stationary_env.arm_means[0], np.float64)
+    assert len(stationary_env.arm_means) == stationary_env.number_of_arms
+    assert optimal_arm_index == stationary_env.optimal_arm
+    assert 0 <= optimal_arm_index < stationary_env.number_of_arms
 
 
 def test_reset(stationary_env: KArmEnvironment):
     # WHEN
-    previous_arms = stationary_env._arm_means
+    previous_arms = stationary_env.arm_means
     reset_observation, reset_information = stationary_env.reset()
-    current_arms = stationary_env._arm_means
+    current_arms = stationary_env.arm_means
 
     # THEN
     assert stationary_env._pulls == 0
@@ -114,7 +114,7 @@ def test_step_terminated(stationary_env: KArmEnvironment):
 
 def test_step_reward_values(stationary_env: KArmEnvironment):
     # WHEN
-    for index, mean in enumerate(stationary_env._arm_means):
+    for index, mean in enumerate(stationary_env.arm_means):
         _, reward, _, _, _ = stationary_env.step(index)
 
         # THEN
@@ -125,7 +125,7 @@ def test_ensure_not_terminated_correctly_called(
     stationary_env: KArmEnvironment,
 ):
     # WHEN
-    for _ in range(stationary_env._max_steps):
+    for _ in range(stationary_env.max_steps):
         stationary_env.step(0)
 
     # THEN
