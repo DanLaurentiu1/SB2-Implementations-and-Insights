@@ -47,43 +47,9 @@ class KArmEnvironment(Env, BaseBanditEnv):
 
         self._get_new_arms()
 
-    def _get_new_arms(self):
-        self._arm_means = self._np_random.normal(
-            loc=0.0, scale=1.0, size=self._number_of_arms
-        )
-        self._optimal_arm = int(np.argmax(self._arm_means))
-
-    def _get_obs(self):
-        return np.float64(1)
-
-    def _get_info(self, optimal_arm_chosen: bool):
-        return {"optimal_arm_chosen": optimal_arm_chosen}
-
-    def _ensure_not_terminated(self):
-        if self._terminated:
-            raise EnvironmentLogicException(
-                f"step() called after rollout termination. call reset() first."
-            )
-
-    def _validate_input(self, number_of_arms: int, seed: int, max_steps: int):
-        if number_of_arms < 1:
-            raise EnvironmentLogicException(
-                f"Invalid number of arms={number_of_arms}. This number must be positive and bigger than 0."
-            )
-        if max_steps < 1:
-            raise EnvironmentLogicException(
-                f"Invalid number of max_steps={max_steps}. This number must be positive and bigger than 0."
-            )
-        if seed < 0:
-            raise EnvironmentLogicException(
-                f"Invalid seed={seed}. This number must be positive."
-            )
-
-    def _validate_action(self, action: int):
-        if not (0 <= action < self._number_of_arms):
-            raise EnvironmentLogicException(
-                f"Invalid action={action}. Action must be a member of [0, {self._number_of_arms - 1}]"
-            )
+    # ==============
+    # Properties
+    # ==============
 
     @property
     def number_of_arms(self) -> int:
@@ -112,6 +78,10 @@ class KArmEnvironment(Env, BaseBanditEnv):
     @property
     def observation_space(self) -> Space:
         return self._observation_space
+
+    # ==============
+    # Public API
+    # ==============
 
     def reset(self, *, seed=None):
         super().reset(seed=seed)
@@ -151,6 +121,48 @@ class KArmEnvironment(Env, BaseBanditEnv):
             self._truncated,
             self._get_info(optimal_arm_chosen=is_optimal),
         )
+
+    # ==============
+    # Internals
+    # ==============
+
+    def _get_new_arms(self):
+        self._arm_means = self._np_random.normal(
+            loc=0.0, scale=1.0, size=self._number_of_arms
+        )
+        self._optimal_arm = int(np.argmax(self._arm_means))
+
+    def _get_obs(self):
+        return np.float64(1)
+
+    def _get_info(self, optimal_arm_chosen: bool):
+        return {"optimal_arm_chosen": optimal_arm_chosen}
+
+    def _ensure_not_terminated(self):
+        if self._terminated:
+            raise EnvironmentLogicException(
+                f"step() called after rollout termination. call reset() first."
+            )
+
+    def _validate_input(self, number_of_arms: int, seed: int, max_steps: int):
+        if number_of_arms < 1:
+            raise EnvironmentLogicException(
+                f"Invalid number of arms={number_of_arms}. This number must be positive and bigger than 0."
+            )
+        if max_steps < 1:
+            raise EnvironmentLogicException(
+                f"Invalid number of max_steps={max_steps}. This number must be positive and bigger than 0."
+            )
+        if seed < 0:
+            raise EnvironmentLogicException(
+                f"Invalid seed={seed}. This number must be positive."
+            )
+
+    def _validate_action(self, action: int):
+        if not (0 <= action < self._number_of_arms):
+            raise EnvironmentLogicException(
+                f"Invalid action={action}. Action must be a member of [0, {self._number_of_arms - 1}]"
+            )
 
     def __str__(self):
         return f"KArmEnv(seed={self.seed}, arms={self.number_of_arms})"
