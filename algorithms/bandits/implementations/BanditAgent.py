@@ -2,6 +2,10 @@ from typing import List
 
 import numpy as np
 from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
+    ExplorationExploitationStrategy,
+)
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 from gymnasium.utils.seeding import np_random
 
@@ -12,17 +16,21 @@ class BanditAgent(BaseBanditAgent):
     def __init__(
         self,
         env: BaseBanditEnv,
-        epsilon: float,
         seed: int,
         metrics: List[str],
+        exploration_strategy: ExplorationExploitationStrategy | None = None,
     ):
         self._env: BaseBanditEnv = env
-        self._epsilon: float = epsilon
         self._seed: int = seed
         self._metrics: List[str] = metrics
         self._n_arms: int = self._env.number_of_arms
         self._q_values: np.ndarray = np.zeros(shape=self._n_arms)
         self._action_freq: np.ndarray = np.zeros(shape=self._n_arms, dtype=int)
+
+        if not exploration_strategy:
+            self._exploration_strategy = EpsilonGreedy(epsilon=0.1)
+        else:
+            self._exploration_strategy = exploration_strategy
 
         self._reset_rng()
 
@@ -40,7 +48,7 @@ class BanditAgent(BaseBanditAgent):
 
     @property
     def epsilon(self) -> float:
-        return self._epsilon
+        return self._exploration_strategy.epsilon
 
     @property
     def seed(self) -> int:
@@ -65,12 +73,17 @@ class BanditAgent(BaseBanditAgent):
     def run_episode(self, logger: BaseLogger, log_every: int = 1):
         self._env.reset()
 
-        total_reward = 0.0
-        optimal_chosen_counter = total_steps = 0
+        total_reward: float = 0.0
+        optimal_chosen_counter: int = 0
+        total_steps: int = 0
         terminated = truncated = False
 
         while not terminated and not truncated:
-            action = self._pick_action()
+            action: int = self._exploration_strategy._pick_action(
+                rng=self.np_random,
+                action_space=self.env.action_space,
+                q_values=self._q_values,
+            )
 
             _, reward, terminated, truncated, info = self._env.step(action=action)
             self._update_action_value(action=action, reward=reward)
@@ -112,13 +125,6 @@ class BanditAgent(BaseBanditAgent):
         self._q_values[action] = old_q_values + (
             (1 / self._action_freq[action]) * (reward - old_q_values)
         )
-
-    def _pick_action(self):
-        if self.np_random.random() < self._epsilon:
-            action = int(self._env.action_space.sample())
-        else:
-            action = int(np.argmax(self._q_values))
-        return action
 
     def _set_seed(self, new_seed: int):
         self._seed = new_seed
