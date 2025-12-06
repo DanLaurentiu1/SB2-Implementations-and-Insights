@@ -1,4 +1,5 @@
-from typing import Optional
+from functools import partial
+from typing import Callable, Optional
 import numpy as np
 from gymnasium.utils.seeding import np_random
 from gymnasium import Env, Space
@@ -18,8 +19,8 @@ class KArmEnvironment(Env, BaseBanditEnv):
         number_of_arms: int = 10,
         seed: int = 16,
         max_steps: int = 1000,
-        drift_strategy: Optional[DriftStrategy] = None,
-        reward_strategy: Optional[RewardStrategy] = None,
+        drift_factory: Optional[Callable[..., DriftStrategy]] = None,
+        reward_factory: Optional[Callable[..., RewardStrategy]] = None,
     ):
         self._validate_input(
             number_of_arms=number_of_arms, seed=seed, max_steps=max_steps
@@ -35,15 +36,13 @@ class KArmEnvironment(Env, BaseBanditEnv):
         self._observation_space = Discrete(1, seed=self._seed)
         self._action_space = Discrete(n=self._number_of_arms, seed=self._seed, start=0)
 
-        if not drift_strategy:
-            self._drift_stategy = NoDrift()
-        else:
-            self._drift_stategy = drift_strategy
+        if drift_factory is None:
+            drift_factory = partial(NoDrift)
+        self._drift_stategy = drift_factory()
 
-        if not reward_strategy:
-            self._reward_strategy = GaussianReward()
-        else:
-            self._reward_strategy = reward_strategy
+        if reward_factory is None:
+            reward_factory = partial(GaussianReward, variance=0.01)
+        self._reward_strategy = reward_factory()
 
         self._get_new_arms()
 

@@ -5,7 +5,7 @@ from utils.exceptions.logic_exceptions import RewardLogicException
 
 
 class GaussianReward(RewardStrategy):
-    def __init__(self, variance: np.float64 = 1.0):
+    def __init__(self, variance: np.float64):
         self._validate_input(variance=variance)
 
         self._variance = variance
