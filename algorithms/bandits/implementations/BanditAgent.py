@@ -1,7 +1,14 @@
-from typing import List
+from functools import partial
+from typing import Callable, List, Optional
 
 import numpy as np
 from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
+from algorithms.bandits.implementations.action_value.AverageSampling import (
+    AverageSampling,
+)
+from algorithms.bandits.implementations.action_value.ActionValueStrategy import (
+    ActionValueStrategy,
+)
 from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
@@ -18,19 +25,26 @@ class BanditAgent(BaseBanditAgent):
         env: BaseBanditEnv,
         seed: int,
         metrics: List[str],
-        exploration_strategy: ExplorationExploitationStrategy | None = None,
+        exploration_factory: Optional[
+            Callable[..., ExplorationExploitationStrategy]
+        ] = None,
+        action_value_factory: Optional[Callable[..., ActionValueStrategy]] = None,
     ):
         self._env: BaseBanditEnv = env
         self._seed: int = seed
         self._metrics: List[str] = metrics
         self._n_arms: int = self._env.number_of_arms
         self._q_values: np.ndarray = np.zeros(shape=self._n_arms)
-        self._action_freq: np.ndarray = np.zeros(shape=self._n_arms, dtype=int)
 
-        if not exploration_strategy:
-            self._exploration_strategy = EpsilonGreedy(epsilon=0.1)
-        else:
-            self._exploration_strategy = exploration_strategy
+        if exploration_factory is None:
+            exploration_factory = partial(EpsilonGreedy, epsilon=0.1)
+        self._exploration_strategy = exploration_factory()
+        self._exploration_strategy.setup(env=self._env)
+
+        if action_value_factory is None:
+            action_value_factory = partial(AverageSampling)
+        self._action_value_strategy = action_value_factory()
+        self._action_value_strategy.setup(env=self._env)
 
         self._reset_rng()
 
@@ -64,7 +78,7 @@ class BanditAgent(BaseBanditAgent):
 
     @property
     def action_freq(self) -> np.ndarray:
-        return self._action_freq
+        return self._action_counts
 
     # ==============
     # Public API
@@ -86,7 +100,12 @@ class BanditAgent(BaseBanditAgent):
             )
 
             _, reward, terminated, truncated, info = self._env.step(action=action)
-            self._update_action_value(action=action, reward=reward)
+            self._action_value_strategy.update_action_value(
+                q_values=self._q_values,
+                action=action,
+                reward=reward,
+                ctx=self._action_value_context,
+            )
 
             total_reward += reward
             total_steps += 1
@@ -118,13 +137,6 @@ class BanditAgent(BaseBanditAgent):
 
     def _reset_rng(self):
         self.np_random, _ = np_random(self._seed)
-
-    def _update_action_value(self, action: int, reward: float):
-        self._action_freq[action] += 1
-        old_q_values = self._q_values[action]
-        self._q_values[action] = old_q_values + (
-            (1 / self._action_freq[action]) * (reward - old_q_values)
-        )
 
     def _set_seed(self, new_seed: int):
         self._seed = new_seed
