@@ -1,8 +1,0 @@
-defaults:
-  - algorithm: Figure2_1_algo
-  - environment: Figure2_1_env
-  - run: Figure2_1_run
-
-hydra:
-  run:
-    dir: .

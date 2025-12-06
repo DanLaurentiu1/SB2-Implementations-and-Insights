@@ -1,5 +1,9 @@
-module: "environments.custom_envs.BanditEnvs.StationaryKArmEnvironment"
-class_name: "StationaryKArmEnvironment"
+_target_: environments.custom_envs.BanditEnvs.StationaryKArmEnvironment.StationaryKArmEnvironment
 params:
   number_of_arms: 10
   max_steps: 1000
+  drift_strategy:
+    _target_: environments.custom_envs.BanditEnvs.drift.NoDrift.NoDrift
+  reward_strategy:
+    _target_: environments.custom_envs.BanditEnvs.reward.GaussianReward.GaussianReward
+    variance: 0.01
