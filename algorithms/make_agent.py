@@ -8,10 +8,15 @@ from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
 from algorithms.bandits.implementations.action_value.ActionValueStrategy import (
     ActionValueStrategy,
 )
+from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
+    ExplorationExploitationStrategy,
+)
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 
 
-def make_factory(cfg: DictConfig) -> Callable[..., ActionValueStrategy]:
+def make_factory(
+    cfg: DictConfig,
+) -> Callable[..., ActionValueStrategy | ExplorationExploitationStrategy]:
     strategy_class = hydra.utils.get_class(cfg["_target_"])
     params = {k: v for k, v in cfg.items() if k != "_target_"}
     strategy_factory = partial(strategy_class, **params)
