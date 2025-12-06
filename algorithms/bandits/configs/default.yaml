@@ -1,5 +1,5 @@
 defaults:
-  - algorithm: Bandit_0.1Eps
+  - algorithm: BaseBandit
   - environment: 10ArmTestBed
   - run: TestRun
 
