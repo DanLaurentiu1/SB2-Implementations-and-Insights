@@ -1,5 +1,5 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 
 
 def save_cli_command(base: Path, file_name: str):

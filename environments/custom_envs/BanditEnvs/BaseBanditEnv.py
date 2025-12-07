@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from gymnasium import Space
+
 import numpy as np
+from gymnasium import Space
 
 
 class BaseBanditEnv(ABC):

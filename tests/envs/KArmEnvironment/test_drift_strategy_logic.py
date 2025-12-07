@@ -1,13 +1,12 @@
-import pytest
+from contextlib import contextmanager
+
 import numpy as np
-from environments.custom_envs.BanditEnvs.KArmEnvironment import (
-    KArmEnvironment,
-)
+import pytest
+from gymnasium.utils.seeding import np_random
+
 from environments.custom_envs.BanditEnvs.drift.GaussianDrift import GaussianDrift
 from environments.custom_envs.BanditEnvs.drift.NoDrift import NoDrift
 from utils.exceptions.logic_exceptions import DriftingLogicException
-from gymnasium.utils.seeding import np_random
-from contextlib import contextmanager
 
 
 @contextmanager
@@ -68,7 +67,7 @@ def test_no_drift_does_not_change_arm_means(
     new_arm_means = no_drift.drift(arm_means=arm_means, rng=first_rng_16)
 
     # THEN
-    assert np.array_equal(original_arm_means, new_arm_means) == True
+    assert np.array_equal(original_arm_means, new_arm_means)
 
 
 def test_gaussian_drift_can_call_all_methods(
@@ -128,7 +127,7 @@ def test_gaussian_drift_drift_performs_correct_addition(
     actual_arm_means = gaussian_drift.drift(arm_means=arm_means, rng=second_rng_16)
 
     # THEN
-    assert np.array_equal(expected_arm_means, actual_arm_means) == True
+    assert np.array_equal(expected_arm_means, actual_arm_means)
 
 
 def test_gaussian_drift_drift_is_deterministic(
@@ -150,7 +149,7 @@ def test_gaussian_drift_drift_is_deterministic(
         )
 
         # THEN
-        assert np.array_equal(expected_arm_means_temp, actual_arm_means_temp) == True
+        assert np.array_equal(expected_arm_means_temp, actual_arm_means_temp)
 
 
 def test_gaussian_drift_representation(gaussian_drift: GaussianDrift):

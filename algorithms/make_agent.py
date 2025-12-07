@@ -1,13 +1,13 @@
 from functools import partial
-import importlib
 from typing import Callable
+
 import hydra
 from omegaconf import DictConfig
 
-from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
 from algorithms.bandits.implementations.action_value.ActionValueStrategy import (
     ActionValueStrategy,
 )
+from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
 )

@@ -1,13 +1,14 @@
 from functools import partial
 from typing import Callable, Optional
+
 import numpy as np
-from gymnasium.utils.seeding import np_random
 from gymnasium import Env, Space
 from gymnasium.spaces import Discrete
+from gymnasium.utils.seeding import np_random
 
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
-from environments.custom_envs.BanditEnvs.drift.NoDrift import NoDrift
 from environments.custom_envs.BanditEnvs.drift.DriftStrategy import DriftStrategy
+from environments.custom_envs.BanditEnvs.drift.NoDrift import NoDrift
 from environments.custom_envs.BanditEnvs.reward.GaussianReward import GaussianReward
 from environments.custom_envs.BanditEnvs.reward.RewardStrategy import RewardStrategy
 from utils.exceptions.logic_exceptions import EnvironmentLogicException
@@ -137,7 +138,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
     def _ensure_not_terminated(self):
         if self._terminated:
             raise EnvironmentLogicException(
-                f"step() called after rollout termination. call reset() first."
+                "step() called after rollout termination. call reset() first."
             )
 
     def _validate_input(self, number_of_arms: int, seed: int, max_steps: int):

@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
+
 import numpy as np
+
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 from utils.logging.BaseLogger import BaseLogger
 

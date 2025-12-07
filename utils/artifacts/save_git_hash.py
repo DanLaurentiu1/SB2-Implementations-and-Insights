@@ -1,5 +1,5 @@
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 
 def save_git_hash(base: Path, file_name: str):

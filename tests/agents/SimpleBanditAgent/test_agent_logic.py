@@ -83,7 +83,7 @@ def test_agent_invalid_seed_throws_exception(stationary_env: KArmEnvironment):
             action_value_factory=partial(AverageSampling),
         )
 
-    assert f"Invalid seed=-12. This number must be positive." in str(
+    assert "Invalid seed=-12. This number must be positive." in str(
         exception_output.value
     )
 
@@ -98,7 +98,7 @@ def test_agent_invalid_metrics_throws_exception(stationary_env: KArmEnvironment)
             action_value_factory=partial(AverageSampling),
         )
 
-    assert f"Invalid metrics=[]. The array should not be empty." in str(
+    assert "Invalid metrics=[]. The array should not be empty." in str(
         exception_output.value
     )
 

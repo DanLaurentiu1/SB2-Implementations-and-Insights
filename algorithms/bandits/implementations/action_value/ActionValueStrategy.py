@@ -9,7 +9,7 @@ class ActionValueStrategy(ABC):
     def __init__(self, **kwargs):
         pass
 
-    def setup(self, env: BaseBanditEnv) -> None:
+    def _setup(self, env: BaseBanditEnv) -> None:
         pass
 
     @abstractmethod

@@ -2,20 +2,20 @@ from functools import partial
 from typing import Callable, List, Optional
 
 import numpy as np
-from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
-from algorithms.bandits.implementations.action_value.AverageSampling import (
-    AverageSampling,
-)
+from gymnasium.utils.seeding import np_random
+
 from algorithms.bandits.implementations.action_value.ActionValueStrategy import (
     ActionValueStrategy,
 )
+from algorithms.bandits.implementations.action_value.AverageSampling import (
+    AverageSampling,
+)
+from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
 from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
 )
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
-from gymnasium.utils.seeding import np_random
-
 from utils.exceptions.logic_exceptions import AgentLogicException
 from utils.logging.BaseLogger import BaseLogger
 
@@ -42,10 +42,10 @@ class BanditAgent(BaseBanditAgent):
         self._q_values: np.ndarray = np.zeros(shape=self._n_arms)
 
         self._exploration_strategy = exploration_factory()
-        self._exploration_strategy.setup(env=self._env)
+        self._exploration_strategy._setup(env=self._env)
 
         self._action_value_strategy = action_value_factory()
-        self._action_value_strategy.setup(env=self._env)
+        self._action_value_strategy._setup(env=self._env)
 
         self._reset_rng()
 

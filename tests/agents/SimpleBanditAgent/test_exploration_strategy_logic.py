@@ -42,7 +42,7 @@ def test_epsilon_greedy_negative_epsilon_throws_exception():
         EpsilonGreedy(epsilon=-1.0)
 
     # THEN
-    assert f"Invalid epsilon=-1.0. Epsilon must be between 0 and 1." in str(
+    assert "Invalid epsilon=-1.0. Epsilon must be between 0 and 1." in str(
         exception_output.value
     )
 
@@ -56,7 +56,7 @@ def test_pick_action(greedy_strategy: EpsilonGreedy, first_rng_16: np.random.Gen
     )
 
     # THEN
-    assert type(action_greedy) == int
+    assert type(action_greedy) is int
     assert action_greedy == 0
 
     # WHEN

@@ -1,5 +1,6 @@
-from gymnasium import Space
 import numpy as np
+from gymnasium import Space
+
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
 )

@@ -1,12 +1,13 @@
-import pytest
-import numpy as np
 from contextlib import contextmanager
 
-from algorithms.bandits.implementations.action_value.ERWAverageSampling import (
-    ERWAverageSampling,
-)
+import numpy as np
+import pytest
+
 from algorithms.bandits.implementations.action_value.AverageSampling import (
     AverageSampling,
+)
+from algorithms.bandits.implementations.action_value.ERWAverageSampling import (
+    ERWAverageSampling,
 )
 from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
 from utils.exceptions.logic_exceptions import ActionValueLogicException
@@ -30,7 +31,7 @@ def stationary_env() -> KArmEnvironment:
 @pytest.fixture
 def average_sampling(stationary_env: KArmEnvironment) -> AverageSampling:
     action_value_strategy = AverageSampling()
-    action_value_strategy.setup(env=stationary_env)
+    action_value_strategy._setup(env=stationary_env)
     return action_value_strategy
 
 
@@ -38,7 +39,7 @@ def average_sampling(stationary_env: KArmEnvironment) -> AverageSampling:
 @pytest.fixture
 def erw_average_sampling(stationary_env: KArmEnvironment) -> ERWAverageSampling:
     action_value_strategy = ERWAverageSampling(alpha=1)
-    action_value_strategy.setup(env=stationary_env)
+    action_value_strategy._setup(env=stationary_env)
     return action_value_strategy
 
 
@@ -48,7 +49,7 @@ def test_alpha_negative_throws_exception():
         ERWAverageSampling(alpha=-2)
 
     # THEN
-    assert f"Invalid alpha=-2. Alpha must be between 1 and 0." in str(
+    assert "Invalid alpha=-2. Alpha must be between 1 and 0." in str(
         exception_output.value
     )
 

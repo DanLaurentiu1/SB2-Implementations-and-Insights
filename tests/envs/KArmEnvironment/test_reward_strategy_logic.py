@@ -1,10 +1,11 @@
-import pytest
+from contextlib import contextmanager
+
 import numpy as np
-from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
+import pytest
+from gymnasium.utils.seeding import np_random
+
 from environments.custom_envs.BanditEnvs.reward.GaussianReward import GaussianReward
 from utils.exceptions.logic_exceptions import RewardLogicException
-from gymnasium.utils.seeding import np_random
-from contextlib import contextmanager
 
 
 @contextmanager
@@ -87,4 +88,4 @@ def test_gaussian_reward_get_reward_is_deterministic(
         actual_reward = gaussian_reward.get_reward(arm_mean=arm_mean, rng=first_rng_16)
 
         # THEN
-        assert np.equal(expected_reward, actual_reward) == True
+        assert np.equal(expected_reward, actual_reward)
