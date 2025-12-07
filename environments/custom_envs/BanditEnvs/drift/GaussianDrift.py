@@ -39,3 +39,8 @@ class GaussianDrift(DriftStrategy):
 
     def reset(self):
         pass
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}(mean={self._mean}, variance={self._variance})"
+        )

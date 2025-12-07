@@ -42,3 +42,6 @@ class EpsilonGreedy(ExplorationExploitationStrategy):
             raise ExplorationLogicException(
                 f"Invalid epsilon={epsilon}. Epsilon must be between 0 and 1."
             )
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(epsilon={self._epsilon})"

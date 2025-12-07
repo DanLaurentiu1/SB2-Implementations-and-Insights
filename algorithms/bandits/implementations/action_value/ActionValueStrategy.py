@@ -17,3 +17,7 @@ class ActionValueStrategy(ABC):
         self, q_values: np.ndarray, action: int, reward: float
     ) -> None:
         pass
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        pass

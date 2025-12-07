@@ -14,3 +14,6 @@ class ERWAverageSampling(ActionValueStrategy):
         self, q_values: np.ndarray, action: int, reward: float
     ) -> None:
         q_values[action] += self._alpha * (reward - q_values[action])
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(alpha={self._alpha})"

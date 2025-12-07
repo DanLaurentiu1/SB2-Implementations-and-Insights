@@ -23,3 +23,6 @@ class GaussianReward(RewardStrategy):
 
     def get_reward(self, arm_mean: np.float64, rng: np.random.Generator) -> np.float64:
         return rng.normal(loc=arm_mean, scale=self._variance)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(variance={self._variance})"

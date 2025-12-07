@@ -27,8 +27,10 @@ class BanditAgent(BaseBanditAgent):
         metrics: List[str],
         exploration_factory: Optional[
             Callable[..., ExplorationExploitationStrategy]
-        ] = None,
-        action_value_factory: Optional[Callable[..., ActionValueStrategy]] = None,
+        ] = partial(EpsilonGreedy, epsilon=0.1),
+        action_value_factory: Optional[Callable[..., ActionValueStrategy]] = partial(
+            AverageSampling
+        ),
     ):
         self._env: BaseBanditEnv = env
         self._seed: int = seed
@@ -36,13 +38,9 @@ class BanditAgent(BaseBanditAgent):
         self._n_arms: int = self._env.number_of_arms
         self._q_values: np.ndarray = np.zeros(shape=self._n_arms)
 
-        if exploration_factory is None:
-            exploration_factory = partial(EpsilonGreedy, epsilon=0.1)
         self._exploration_strategy = exploration_factory()
         self._exploration_strategy.setup(env=self._env)
 
-        if action_value_factory is None:
-            action_value_factory = partial(AverageSampling)
         self._action_value_strategy = action_value_factory()
         self._action_value_strategy.setup(env=self._env)
 
@@ -61,10 +59,6 @@ class BanditAgent(BaseBanditAgent):
         return self._metrics
 
     @property
-    def epsilon(self) -> float:
-        return self._exploration_strategy.epsilon
-
-    @property
     def seed(self) -> int:
         return self._seed
 
@@ -75,10 +69,6 @@ class BanditAgent(BaseBanditAgent):
     @property
     def q_values(self) -> np.ndarray:
         return self._q_values
-
-    @property
-    def action_freq(self) -> np.ndarray:
-        return self._action_counts
 
     # ==============
     # Public API
@@ -93,7 +83,7 @@ class BanditAgent(BaseBanditAgent):
         terminated = truncated = False
 
         while not terminated and not truncated:
-            action: int = self._exploration_strategy._pick_action(
+            action: int = self._exploration_strategy.pick_action(
                 rng=self.np_random,
                 action_space=self.env.action_space,
                 q_values=self._q_values,
@@ -104,7 +94,6 @@ class BanditAgent(BaseBanditAgent):
                 q_values=self._q_values,
                 action=action,
                 reward=reward,
-                ctx=self._action_value_context,
             )
 
             total_reward += reward
@@ -114,14 +103,18 @@ class BanditAgent(BaseBanditAgent):
             if total_steps % log_every == 0 or terminated or truncated:
                 row = {
                     "step": total_steps,
-                    "action": action,
-                    "reward": reward,
-                    "total_reward": total_reward,
-                    "average_reward": total_reward / total_steps,
-                    "optimal_chosen_percentage": optimal_chosen_counter / total_steps,
+                    "action": int(action),
+                    "reward": float(reward),
+                    "total_reward": float(total_reward),
+                    "average_reward": float(total_reward) / total_steps,
+                    "optimal_chosen_counter": float(optimal_chosen_counter),
+                    "optimal_chosen_percentage": (
+                        float(optimal_chosen_counter) / total_steps
+                        if total_steps
+                        else 0.0
+                    ),
                 }
-
-            logger.log(row=row)
+                logger.log(row=row)
 
         return {
             "episode_reward": total_reward,
@@ -143,4 +136,7 @@ class BanditAgent(BaseBanditAgent):
         self._reset_rng()
 
     def __str__(self):
-        return f"Agent(seed={self._seed}, eps={self._epsilon})"
+        return f"{self.__class__.__name__}(seed={self._seed})"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(seed={self._seed},\n\tenv={self.env.__repr__()},\n\taction_value={self._action_value_strategy.__repr__()},\n\texploration={self._exploration_strategy.__repr__()}\n)"
