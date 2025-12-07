@@ -1,28 +1,31 @@
-import pytest
+from functools import partial
+
 import numpy as np
+import pytest
+from gymnasium import Space
+from gymnasium.spaces import Discrete
+
+from environments.custom_envs.BanditEnvs.drift.GaussianDrift import GaussianDrift
 from environments.custom_envs.BanditEnvs.KArmEnvironment import (
     KArmEnvironment,
 )
-from environments.custom_envs.BanditEnvs.drift.GaussianDrift import GaussianDrift
-from gymnasium import Space
-from gymnasium.spaces import Discrete
-from environments.custom_envs.BanditEnvs.reward.GaussianReward import GaussianReward
 from utils.exceptions.logic_exceptions import EnvironmentLogicException
 
 
 # GIVEN
 @pytest.fixture
 def stationary_env() -> KArmEnvironment:
-    return KArmEnvironment(
-        number_of_arms=2, seed=16, max_steps=10, reward_strategy=GaussianReward()
-    )
+    return KArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
 
 
 # GIVEN
 @pytest.fixture
 def non_stationary_env() -> KArmEnvironment:
     return KArmEnvironment(
-        number_of_arms=10, seed=16, max_steps=100, drift_strategy=GaussianDrift()
+        number_of_arms=10,
+        seed=16,
+        max_steps=100,
+        drift_factory=partial(GaussianDrift, mean=0, variance=0.01),
     )
 
 
@@ -82,7 +85,7 @@ def test_reset(stationary_env: KArmEnvironment):
 
     # THEN
     assert stationary_env._pulls == 0
-    assert np.array_equal(previous_arms, current_arms) == True
+    assert np.array_equal(previous_arms, current_arms)
     assert isinstance(reset_information, dict)
     assert isinstance(reset_observation, np.float64)
 
@@ -104,12 +107,12 @@ def test_step_output(stationary_env: KArmEnvironment):
 def test_step_terminated(stationary_env: KArmEnvironment):
     # WHEN
     for _ in range(1, stationary_env._max_steps):
-        assert stationary_env._terminated == False
+        assert stationary_env._terminated is False
         stationary_env.step(0)
     _, _, step_terminated, _, _ = stationary_env.step(0)
 
     # THEN
-    assert step_terminated == True
+    assert step_terminated is True
 
 
 def test_step_reward_values(stationary_env: KArmEnvironment):
@@ -190,7 +193,6 @@ def test_step_non_stationary_optimal_arm_stays_consistent(
     terminated = truncated = False
 
     while not terminated and not truncated:
-
         # THEN
         assert non_stationary_env.optimal_arm == np.argmax(non_stationary_env.arm_means)
         _, _, terminated, truncated, _ = non_stationary_env.step(action=0)
@@ -198,7 +200,7 @@ def test_step_non_stationary_optimal_arm_stays_consistent(
 
 def test_environment_to_string_method(stationary_env: KArmEnvironment):
     # WHEN
-    expected_string = "KArmEnv(seed=16, arms=2)"
+    expected_string = "KArmEnvironment(seed=16, arms=2)"
     actual_string = stationary_env.__str__()
 
     # THEN
@@ -207,7 +209,7 @@ def test_environment_to_string_method(stationary_env: KArmEnvironment):
 
 def test_environment_to_repr_method(stationary_env: KArmEnvironment):
     # WHEN
-    expected_string = "KArmEnv(drift=NoDrift, reward=GaussianReward, seed=16, arms=2)"
+    expected_string = "KArmEnvironment(\n\tdrift=NoDrift(),\n\treward=GaussianReward(variance=1),\n\tseed=16,\n\tarms=2\n)"
     actual_string = stationary_env.__repr__()
 
     # THEN

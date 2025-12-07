@@ -11,3 +11,7 @@ class DriftStrategy(ABC):
     @abstractmethod
     def reset(self):
         pass
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        pass

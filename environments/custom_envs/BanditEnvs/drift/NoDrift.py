@@ -1,4 +1,5 @@
 import numpy as np
+
 from environments.custom_envs.BanditEnvs.drift.DriftStrategy import DriftStrategy
 
 
@@ -8,3 +9,6 @@ class NoDrift(DriftStrategy):
 
     def reset(self):
         pass
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}()"

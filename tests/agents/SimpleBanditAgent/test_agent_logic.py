@@ -1,26 +1,45 @@
 import json
+from contextlib import contextmanager
+from functools import partial
 from pathlib import Path
+from typing import cast
+
 import numpy as np
 import pytest
-from algorithms.bandits.implementations.BanditAgent import BanditAgent
-from environments.custom_envs.BanditEnvs.KArmEnvironment import (
-    KArmEnvironment,
+
+from algorithms.bandits.implementations.action_value.AverageSampling import (
+    AverageSampling,
 )
+from algorithms.bandits.implementations.BanditAgent import BanditAgent
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
+from utils.exceptions.logic_exceptions import AgentLogicException
 from utils.logging.FakeLogger import FakeLogger
 
 
-# GIVEN
-@pytest.fixture
-def simple_env() -> KArmEnvironment:
-    return KArmEnvironment(number_of_arms=3, seed=16, max_steps=5)
+@contextmanager
+def not_raises():
+    try:
+        yield
+    except Exception as e:
+        raise AssertionError(f"Raised unexpected exception: {e}")
 
 
 # GIVEN
 @pytest.fixture
-def agent(simple_env: KArmEnvironment) -> BanditAgent:
+def stationary_env() -> KArmEnvironment:
+    return KArmEnvironment(
+        number_of_arms=3,
+        seed=16,
+        max_steps=5,
+    )
+
+
+# GIVEN
+@pytest.fixture
+def agent(stationary_env: KArmEnvironment) -> BanditAgent:
     return BanditAgent(
-        env=simple_env,
-        epsilon=0.1,
+        env=stationary_env,
         seed=16,
         metrics=[
             "step",
@@ -30,6 +49,8 @@ def agent(simple_env: KArmEnvironment) -> BanditAgent:
             "average_reward",
             "optimal_chosen_percentage",
         ],
+        exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+        action_value_factory=partial(AverageSampling),
     )
 
 
@@ -39,12 +60,54 @@ def full_run_values_json_path() -> Path:
     return Path(__file__).parent / "agent_16_behaviour_values.json"
 
 
+# GIVEN
+@pytest.fixture
+def full_run_values_json_path_logging_skip() -> Path:
+    return Path(__file__).parent / "agent_16_behaviour_values_logging_skip.json"
+
+
+def test_agent_invalid_seed_throws_exception(stationary_env: KArmEnvironment):
+    with pytest.raises(AgentLogicException) as exception_output:
+        BanditAgent(
+            env=stationary_env,
+            seed=-12,
+            metrics=[
+                "step",
+                "action",
+                "reward",
+                "total_reward",
+                "average_reward",
+                "optimal_chosen_percentage",
+            ],
+            exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+            action_value_factory=partial(AverageSampling),
+        )
+
+    assert "Invalid seed=-12. This number must be positive." in str(
+        exception_output.value
+    )
+
+
+def test_agent_invalid_metrics_throws_exception(stationary_env: KArmEnvironment):
+    with pytest.raises(AgentLogicException) as exception_output:
+        BanditAgent(
+            env=stationary_env,
+            seed=12,
+            metrics=[],
+            exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+            action_value_factory=partial(AverageSampling),
+        )
+
+    assert "Invalid metrics=[]. The array should not be empty." in str(
+        exception_output.value
+    )
+
+
 def test_constructor_initializes_fields(
-    agent: BanditAgent, simple_env: KArmEnvironment
+    agent: BanditAgent, stationary_env: KArmEnvironment
 ):
     # THEN
-    assert agent.env is simple_env
-    assert agent.epsilon == pytest.approx(0.1)
+    assert agent.env is stationary_env
     assert agent.seed == 16
     assert agent.metrics == [
         "step",
@@ -56,11 +119,19 @@ def test_constructor_initializes_fields(
     ]
     assert agent.n_arms == 3
     assert isinstance(agent.q_values, np.ndarray)
-    assert agent.q_values.shape[0] == simple_env.number_of_arms
+    assert agent.q_values.shape[0] == stationary_env.number_of_arms
     assert np.all(agent.q_values == 0)
-    assert isinstance(agent.action_freq, np.ndarray)
-    assert agent.action_freq.shape[0] == simple_env.number_of_arms
-    assert np.all(agent.action_freq == 0)
+
+    assert isinstance(agent._exploration_strategy, EpsilonGreedy)
+    assert agent._exploration_strategy.epsilon == 0.1
+
+    assert isinstance(agent._action_value_strategy, AverageSampling)
+    assert isinstance(agent._action_value_strategy._action_counts, np.ndarray)
+    assert (
+        agent._action_value_strategy._action_counts.shape[0]
+        == stationary_env.number_of_arms
+    )
+    assert np.all(agent._action_value_strategy._action_counts == 0)
 
 
 def test_set_seed_changes_rng_state(agent: BanditAgent):
@@ -91,22 +162,6 @@ def test_get_metrics(agent: BanditAgent):
     assert agent.metrics == metrics
 
 
-def test_update_action_values(agent: BanditAgent):
-    # WHEN
-    agent._update_action_value(action=0, reward=0.5)
-
-    # THEN
-    assert agent.action_freq[0] == 1
-    assert agent.q_values[0] == pytest.approx(0.5)
-
-    # WHEN
-    agent._update_action_value(action=0, reward=2.5)
-
-    # THEN
-    assert agent.action_freq[0] == 2
-    assert agent.q_values[0] == pytest.approx(1.5)
-
-
 def test_run_episode_logs_and_returns(agent: BanditAgent):
     logger = FakeLogger()
 
@@ -131,24 +186,86 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
     assert "optimal_chosen_percentage" in first_row
 
 
-def test_pick_action(agent: BanditAgent):
+def test_agent_repr(agent: BanditAgent):
     # WHEN
-    agent._q_values = np.array([2.0, 1.0, 0.0])
-    agent._env = 0.0
-    action_greedy = agent._pick_action()
+    expected_string = "BanditAgent(seed=16,\n\tenv=KArmEnvironment(\n\tdrift=NoDrift(),\n\treward=GaussianReward(variance=1),\n\tseed=16,\n\tarms=3\n),\n\taction_value=AverageSampling(),\n\texploration=EpsilonGreedy(epsilon=0.1)\n)"
+    actual_string = agent.__repr__()
 
     # THEN
-    assert action_greedy == 0
+    assert expected_string == actual_string
 
+
+def test_agent_str(agent: BanditAgent):
     # WHEN
-    agent._q_values = np.array([-2.0, 1.0, 0.0])
-    action_greedy = agent._pick_action()
+    expected_string = "BanditAgent(seed=16)"
+    actual_string = agent.__str__()
 
     # THEN
-    assert action_greedy == 1
+    assert expected_string == actual_string
 
 
-def test_full_run(agent: BanditAgent, full_run_values_json_path: Path):
+def test_full_run_simple(agent: BanditAgent, full_run_values_json_path: Path):
+    # WHEN
+    logger = FakeLogger()
+    agent.run_episode(logger=logger, log_every=1)
+
+    with full_run_values_json_path.open("r") as f:
+        expected_rows = json.load(f)
+
+    # THEN
+    assert len(logger.rows) == len(expected_rows)
+    for actual, expected in zip(logger.get_rows(), expected_rows):
+        assert actual["step"] == expected["step"]
+        assert actual["action"] == expected["action"]
+        assert actual["reward"] == pytest.approx(expected["reward"], abs=5e-2)
+        assert actual["total_reward"] == pytest.approx(
+            expected["total_reward"], abs=5e-2
+        )
+        assert actual["average_reward"] == pytest.approx(
+            expected["average_reward"], abs=5e-2
+        )
+        assert actual["optimal_chosen_counter"] == pytest.approx(
+            expected["optimal_chosen_counter"], abs=5e-2
+        )
+        assert actual["optimal_chosen_percentage"] == pytest.approx(
+            expected["optimal_chosen_percentage"], abs=5e-2
+        )
+
+
+def test_full_run_simple_skip_logging(
+    agent: BanditAgent, full_run_values_json_path_logging_skip: Path
+):
+    # WHEN
+    logger = FakeLogger()
+    agent.run_episode(logger=logger, log_every=2)
+
+    with full_run_values_json_path_logging_skip.open("r") as f:
+        expected_rows = json.load(f)
+
+    # THEN
+    assert len(logger.rows) == len(expected_rows)
+    for actual, expected in zip(logger.get_rows(), expected_rows):
+        assert actual["step"] == expected["step"]
+        assert actual["action"] == expected["action"]
+        assert actual["reward"] == pytest.approx(expected["reward"], abs=5e-2)
+        assert actual["total_reward"] == pytest.approx(
+            expected["total_reward"], abs=5e-2
+        )
+        assert actual["average_reward"] == pytest.approx(
+            expected["average_reward"], abs=5e-2
+        )
+        assert actual["optimal_chosen_counter"] == pytest.approx(
+            expected["optimal_chosen_counter"], abs=5e-2
+        )
+        assert actual["optimal_chosen_percentage"] == pytest.approx(
+            expected["optimal_chosen_percentage"], abs=5e-2
+        )
+
+
+def test_full_run_advanced(agent: BanditAgent, full_run_values_json_path: Path):
+    action_value_strategy = cast(AverageSampling, agent._action_value_strategy)
+    exploration_strategy = cast(EpsilonGreedy, agent._exploration_strategy)
+
     # WHEN
     logger = FakeLogger()
 
@@ -157,10 +274,16 @@ def test_full_run(agent: BanditAgent, full_run_values_json_path: Path):
     terminated = truncated = False
 
     while not terminated and not truncated:
-        action = agent._pick_action()
+        action: int = exploration_strategy.pick_action(
+            rng=agent.np_random,
+            action_space=agent.env.action_space,
+            q_values=agent._q_values,
+        )
 
         _, reward, terminated, truncated, info = agent.env.step(action=action)
-        agent._update_action_value(action=action, reward=reward)
+        action_value_strategy.update_action_value(
+            q_values=agent.q_values, action=action, reward=reward
+        )
 
         total_reward += reward
         total_steps += 1
@@ -177,7 +300,7 @@ def test_full_run(agent: BanditAgent, full_run_values_json_path: Path):
                 float(optimal_chosen_counter) / total_steps if total_steps else 0.0
             ),
             "q_values": agent.q_values.tolist(),
-            "action_freq": agent.action_freq.tolist(),
+            "action_freq": action_value_strategy._action_counts.tolist(),
         }
 
         logger.log(row=row)

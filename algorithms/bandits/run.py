@@ -1,11 +1,11 @@
 from pathlib import Path
-import importlib, random, numpy as np
-from omegaconf import DictConfig
-from algorithms.make_agent import make_agent
-from algorithms.bandits.utils.make_experiment_directory import make_experiment_directory
-from environments.make_env import make_env
-from hydra import main
 
+from hydra import main
+from omegaconf import DictConfig
+
+from algorithms.bandits.utils.make_experiment_directory import make_experiment_directory
+from algorithms.make_agent import make_agent
+from environments.make_env import make_env
 from utils.logging.CSVLogger import CSVLogger
 
 ROOT = Path(__file__).parent.resolve()

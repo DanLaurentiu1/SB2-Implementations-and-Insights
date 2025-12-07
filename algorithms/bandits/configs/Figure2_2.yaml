@@ -1,8 +1,0 @@
-defaults:
-  - algorithm: BaseBandit
-  - environment: 10ArmTestBed
-  - run: BaseRun
-
-hydra:
-  run:
-    dir: .

@@ -1,12 +1,14 @@
-from typing import Optional
+from functools import partial
+from typing import Callable, Optional
+
 import numpy as np
-from gymnasium.utils.seeding import np_random
 from gymnasium import Env, Space
 from gymnasium.spaces import Discrete
+from gymnasium.utils.seeding import np_random
 
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
-from environments.custom_envs.BanditEnvs.drift.NoDrift import NoDrift
 from environments.custom_envs.BanditEnvs.drift.DriftStrategy import DriftStrategy
+from environments.custom_envs.BanditEnvs.drift.NoDrift import NoDrift
 from environments.custom_envs.BanditEnvs.reward.GaussianReward import GaussianReward
 from environments.custom_envs.BanditEnvs.reward.RewardStrategy import RewardStrategy
 from utils.exceptions.logic_exceptions import EnvironmentLogicException
@@ -18,8 +20,10 @@ class KArmEnvironment(Env, BaseBanditEnv):
         number_of_arms: int = 10,
         seed: int = 16,
         max_steps: int = 1000,
-        drift_strategy: Optional[DriftStrategy] = None,
-        reward_strategy: Optional[RewardStrategy] = None,
+        drift_factory: Optional[Callable[..., DriftStrategy]] = partial(NoDrift),
+        reward_factory: Optional[Callable[..., RewardStrategy]] = partial(
+            GaussianReward, variance=1
+        ),
     ):
         self._validate_input(
             number_of_arms=number_of_arms, seed=seed, max_steps=max_steps
@@ -35,15 +39,8 @@ class KArmEnvironment(Env, BaseBanditEnv):
         self._observation_space = Discrete(1, seed=self._seed)
         self._action_space = Discrete(n=self._number_of_arms, seed=self._seed, start=0)
 
-        if not drift_strategy:
-            self._drift_stategy = NoDrift()
-        else:
-            self._drift_stategy = drift_strategy
-
-        if not reward_strategy:
-            self._reward_strategy = GaussianReward()
-        else:
-            self._reward_strategy = reward_strategy
+        self._drift_stategy = drift_factory()
+        self._reward_strategy = reward_factory()
 
         self._get_new_arms()
 
@@ -141,7 +138,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
     def _ensure_not_terminated(self):
         if self._terminated:
             raise EnvironmentLogicException(
-                f"step() called after rollout termination. call reset() first."
+                "step() called after rollout termination. call reset() first."
             )
 
     def _validate_input(self, number_of_arms: int, seed: int, max_steps: int):
@@ -165,7 +162,9 @@ class KArmEnvironment(Env, BaseBanditEnv):
             )
 
     def __str__(self):
-        return f"KArmEnv(seed={self.seed}, arms={self.number_of_arms})"
+        return (
+            f"{self.__class__.__name__}(seed={self.seed}, arms={self.number_of_arms})"
+        )
 
     def __repr__(self):
-        return f"KArmEnv(drift={self._drift_stategy.__class__.__name__}, reward={self._reward_strategy.__class__.__name__}, seed={self.seed}, arms={self.number_of_arms})"
+        return f"{self.__class__.__name__}(\n\tdrift={self._drift_stategy.__repr__()},\n\treward={self._reward_strategy.__repr__()},\n\tseed={self.seed},\n\tarms={self.number_of_arms}\n)"

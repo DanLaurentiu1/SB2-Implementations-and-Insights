@@ -3,7 +3,9 @@ params:
   number_of_arms: 10
   max_steps: 1000
   drift_strategy:
-    _target_: environments.custom_envs.BanditEnvs.drift.NoDrift.NoDrift
+    _target_: environments.custom_envs.BanditEnvs.drift.GaussianDrift.GaussianDrift
+    mean: 0
+    variance: 0.01
   reward_strategy:
     _target_: environments.custom_envs.BanditEnvs.reward.GaussianReward.GaussianReward
     variance: 1

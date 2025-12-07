@@ -1,14 +1,14 @@
-import sys
 from pathlib import Path
+
+from hydra import main
 from omegaconf import DictConfig
-from hydra import initialize, compose, main
 
 from algorithms.bandits.run import run
-from utils.artifacts.save_git_hash import save_git_hash
 from utils.artifacts.save_cli_command import save_cli_command
-from utils.artifacts.save_seed import save_seed
-from utils.artifacts.save_dependencies import save_dependencies
 from utils.artifacts.save_config import save_config
+from utils.artifacts.save_dependencies import save_dependencies
+from utils.artifacts.save_git_hash import save_git_hash
+from utils.artifacts.save_seed import save_seed
 
 ROOT = Path(__file__).parent.resolve()
 

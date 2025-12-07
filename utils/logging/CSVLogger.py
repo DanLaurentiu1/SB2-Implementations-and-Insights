@@ -1,6 +1,6 @@
-from pathlib import Path
 import csv
-from typing import Dict, List, Any
+from pathlib import Path
+from typing import Any, Dict, List
 
 from utils.logging.BaseLogger import BaseLogger
 

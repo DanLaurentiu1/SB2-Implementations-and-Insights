@@ -1,11 +1,12 @@
-from hydra import main
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+from hydra import main
 from matplotlib.pylab import norm
 from omegaconf import DictConfig
-import numpy as np
-import matplotlib.pyplot as plt
+
 from environments.make_env import make_env
-from scipy.stats import norm
 
 CONFIGS_DIR = Path(__file__).parents[2] / "configs"
 
