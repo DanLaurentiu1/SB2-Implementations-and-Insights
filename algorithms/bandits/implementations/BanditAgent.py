@@ -16,6 +16,7 @@ from algorithms.bandits.implementations.exploration.ExplorationExploitationStrat
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 from gymnasium.utils.seeding import np_random
 
+from utils.exceptions.logic_exceptions import AgentLogicException
 from utils.logging.BaseLogger import BaseLogger
 
 
@@ -32,6 +33,8 @@ class BanditAgent(BaseBanditAgent):
             AverageSampling
         ),
     ):
+        self._validate_input(seed=seed, metrics=metrics)
+
         self._env: BaseBanditEnv = env
         self._seed: int = seed
         self._metrics: List[str] = metrics
@@ -134,6 +137,16 @@ class BanditAgent(BaseBanditAgent):
     def _set_seed(self, new_seed: int):
         self._seed = new_seed
         self._reset_rng()
+
+    def _validate_input(self, seed: int, metrics: List[str]):
+        if seed < 0:
+            raise AgentLogicException(
+                f"Invalid seed={seed}. This number must be positive."
+            )
+        if len(metrics) == 0:
+            raise AgentLogicException(
+                f"Invalid metrics={metrics}. The array should not be empty."
+            )
 
     def __str__(self):
         return f"{self.__class__.__name__}(seed={self._seed})"
