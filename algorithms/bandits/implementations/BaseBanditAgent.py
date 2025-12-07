@@ -26,11 +26,6 @@ class BaseBanditAgent(ABC):
 
     @property
     @abstractmethod
-    def epsilon(self) -> float:
-        pass
-
-    @property
-    @abstractmethod
     def seed(self) -> int:
         pass
 
@@ -42,9 +37,4 @@ class BaseBanditAgent(ABC):
     @property
     @abstractmethod
     def q_values(self) -> np.ndarray:
-        pass
-
-    @property
-    @abstractmethod
-    def action_freq(self) -> np.ndarray:
         pass

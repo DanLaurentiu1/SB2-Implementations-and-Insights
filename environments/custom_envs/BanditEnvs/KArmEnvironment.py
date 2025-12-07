@@ -19,8 +19,10 @@ class KArmEnvironment(Env, BaseBanditEnv):
         number_of_arms: int = 10,
         seed: int = 16,
         max_steps: int = 1000,
-        drift_factory: Optional[Callable[..., DriftStrategy]] = None,
-        reward_factory: Optional[Callable[..., RewardStrategy]] = None,
+        drift_factory: Optional[Callable[..., DriftStrategy]] = partial(NoDrift),
+        reward_factory: Optional[Callable[..., RewardStrategy]] = partial(
+            GaussianReward, variance=1
+        ),
     ):
         self._validate_input(
             number_of_arms=number_of_arms, seed=seed, max_steps=max_steps
@@ -36,12 +38,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
         self._observation_space = Discrete(1, seed=self._seed)
         self._action_space = Discrete(n=self._number_of_arms, seed=self._seed, start=0)
 
-        if drift_factory is None:
-            drift_factory = partial(NoDrift)
         self._drift_stategy = drift_factory()
-
-        if reward_factory is None:
-            reward_factory = partial(GaussianReward, variance=0.01)
         self._reward_strategy = reward_factory()
 
         self._get_new_arms()
@@ -164,7 +161,9 @@ class KArmEnvironment(Env, BaseBanditEnv):
             )
 
     def __str__(self):
-        return f"KArmEnv(seed={self.seed}, arms={self.number_of_arms})"
+        return (
+            f"{self.__class__.__name__}(seed={self.seed}, arms={self.number_of_arms})"
+        )
 
     def __repr__(self):
-        return f"KArmEnv(drift={self._drift_stategy.__class__.__name__}, reward={self._reward_strategy.__class__.__name__}, seed={self.seed}, arms={self.number_of_arms})"
+        return f"{self.__class__.__name__}(\n\tdrift={self._drift_stategy.__repr__()},\n\treward={self._reward_strategy.__repr__()},\n\tseed={self.seed},\n\tarms={self.number_of_arms}\n)"
