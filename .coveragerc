@@ -5,8 +5,14 @@ omit =
     utlis/*
     environments/custom_envs/BanditEnvs/drift/DriftStrategy.py
     environments/custom_envs/BanditEnvs/reward/RewardStrategy.py
-    algorithms/bandits/implementations/BaseBanditAgent.py
+
     environments/custom_envs/BanditEnvs/BaseBanditEnv.py
+
+    algorithms/bandits/implementations/BaseBanditAgent.py
+    
+    algorithms/bandits/implementations/exploration/ExplorationExploitationStrategy.py
+    algorithms/bandits/implementations/action_value/ActionValueStrategy.py
+    
 branch = True
 
 [report]
