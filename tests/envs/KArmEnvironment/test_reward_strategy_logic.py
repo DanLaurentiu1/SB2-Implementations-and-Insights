@@ -18,7 +18,7 @@ def not_raises():
 # GIVEN
 @pytest.fixture
 def gaussian_reward() -> GaussianReward:
-    return GaussianReward()
+    return GaussianReward(variance=1)
 
 
 # GIVEN

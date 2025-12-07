@@ -8,6 +8,11 @@ class EnvironmentLogicException(LogicException):
         super().__init__(f"[EnvironmentLogicException] {message}")
 
 
+class AgentLogicException(LogicException):
+    def __init__(self, message: str):
+        super().__init__(f"[AgentLogicException] {message}")
+
+
 class DriftingLogicException(LogicException):
     def __init__(self, message: str):
         super().__init__(f"[DriftingLogicException] {message}")

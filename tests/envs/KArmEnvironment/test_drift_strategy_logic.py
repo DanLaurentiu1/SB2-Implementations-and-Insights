@@ -151,3 +151,11 @@ def test_gaussian_drift_drift_is_deterministic(
 
         # THEN
         assert np.array_equal(expected_arm_means_temp, actual_arm_means_temp) == True
+
+
+def test_gaussian_drift_representation(gaussian_drift: GaussianDrift):
+    # WHEN
+    expected_string = "GaussianDrift(mean=0, variance=0.01)"
+    actual_string = gaussian_drift.__repr__()
+    # THEN
+    assert expected_string == actual_string

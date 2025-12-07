@@ -1,3 +1,4 @@
+from functools import partial
 import pytest
 import numpy as np
 from environments.custom_envs.BanditEnvs.KArmEnvironment import (
@@ -13,16 +14,17 @@ from utils.exceptions.logic_exceptions import EnvironmentLogicException
 # GIVEN
 @pytest.fixture
 def stationary_env() -> KArmEnvironment:
-    return KArmEnvironment(
-        number_of_arms=2, seed=16, max_steps=10, reward_strategy=GaussianReward()
-    )
+    return KArmEnvironment(number_of_arms=2, seed=16, max_steps=10)
 
 
 # GIVEN
 @pytest.fixture
 def non_stationary_env() -> KArmEnvironment:
     return KArmEnvironment(
-        number_of_arms=10, seed=16, max_steps=100, drift_strategy=GaussianDrift()
+        number_of_arms=10,
+        seed=16,
+        max_steps=100,
+        drift_factory=partial(GaussianDrift, mean=0, variance=0.01),
     )
 
 
@@ -198,7 +200,7 @@ def test_step_non_stationary_optimal_arm_stays_consistent(
 
 def test_environment_to_string_method(stationary_env: KArmEnvironment):
     # WHEN
-    expected_string = "KArmEnv(seed=16, arms=2)"
+    expected_string = "KArmEnvironment(seed=16, arms=2)"
     actual_string = stationary_env.__str__()
 
     # THEN
@@ -207,7 +209,7 @@ def test_environment_to_string_method(stationary_env: KArmEnvironment):
 
 def test_environment_to_repr_method(stationary_env: KArmEnvironment):
     # WHEN
-    expected_string = "KArmEnv(drift=NoDrift, reward=GaussianReward, seed=16, arms=2)"
+    expected_string = "KArmEnvironment(\n\tdrift=NoDrift(),\n\treward=GaussianReward(variance=1),\n\tseed=16,\n\tarms=2\n)"
     actual_string = stationary_env.__repr__()
 
     # THEN
