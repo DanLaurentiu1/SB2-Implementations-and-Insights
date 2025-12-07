@@ -1,7 +1,7 @@
 defaults:
   - algorithm: BaseBandit
   - environment: 10ArmTestBed
-  - run: TestRun
+  - run: BaseRun
 
 hydra:
   run:

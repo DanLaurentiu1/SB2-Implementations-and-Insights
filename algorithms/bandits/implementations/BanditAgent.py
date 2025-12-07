@@ -110,7 +110,7 @@ class BanditAgent(BaseBanditAgent):
                     "reward": float(reward),
                     "total_reward": float(total_reward),
                     "average_reward": float(total_reward) / total_steps,
-                    "optimal_chosen_counter": float(optimal_chosen_counter),
+                    "optimal_chosen_counter": optimal_chosen_counter,
                     "optimal_chosen_percentage": (
                         float(optimal_chosen_counter) / total_steps
                         if total_steps
