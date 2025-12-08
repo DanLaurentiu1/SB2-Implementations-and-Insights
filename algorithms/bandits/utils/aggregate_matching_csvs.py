@@ -52,10 +52,10 @@ if __name__ == "__main__":
 
     aggregate_matching_csvs(
         input_folder=Path(
-            "algorithms/bandits/experiments/testing_something_08_December_2025/raw"
+            "algorithms/bandits/experiments/Robbin-Monro_08_December_2025/raw"
         ),
         keyword=sys.argv[1],
         output_csv=Path(
-            f"algorithms/bandits/experiments/testing_something_08_December_2025/processed/aggregated_over_{sys.argv[1]}.csv"
+            f"algorithms/bandits/experiments/Robbin-Monro_08_December_2025/processed/aggregated_over_{sys.argv[1]}.csv"
         ),
     )

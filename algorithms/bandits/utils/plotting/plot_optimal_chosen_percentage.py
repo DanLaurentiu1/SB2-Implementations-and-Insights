@@ -8,9 +8,10 @@ from matplotlib import pyplot as plt
 
 def plot_optimal_chosen_percentage(folder_path: Path):
     data_map = {
-        "aggregated_over_AverageSampling.csv": ("red", 9000, 1.5, "$\\alpha=1/n$"),
-        "aggregated_over_ERW.csv": ("blue", 6000, 1.7, "$\\alpha=1/10$"),
-        # "aggregated_over_eps=0.csv": ("green", 850, 0.925, 0),
+        "aggregated_over_AverageSampling.csv": ("red", 9000, 0.85, "$\\alpha=1/n$"),
+        "aggregated_over_1e-06.csv": ("blue", 8350, 0.225, "$\\alpha=1e-06$"),
+        "aggregated_over_0.9.csv": ("green", 9000, 0.385, "$\\alpha=0.9$"),
+        "aggregated_over_0.02.csv": ("orange", 7000, 0.5, "$\\alpha=0.02$"),
     }
     all_csvs: List[Path] = []
 
@@ -31,15 +32,15 @@ def plot_optimal_chosen_percentage(folder_path: Path):
         )
 
     plt.yticks(np.arange(0, 1 + 0.2, 0.2))
-    plt.xticks(np.arange(0, 1000 + 1, 250))
+    plt.xticks(np.arange(0, 10000 + 1, 1000))
     plt.xlabel("Steps")
-    plt.ylabel("Opitmal Chosen")
+    plt.ylabel("Opitmal Chosen %")
     plt.show()
 
 
 if __name__ == "__main__":
     plot_optimal_chosen_percentage(
         folder_path=Path(
-            "algorithms/bandits/experiments/testing_something_08_December_2025/processed"
+            "algorithms/bandits/experiments/Robbin-Monro_08_December_2025/processed"
         )
     )
