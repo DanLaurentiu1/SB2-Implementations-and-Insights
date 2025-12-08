@@ -73,7 +73,7 @@ def test_average_sampling_update_action_values(average_sampling: AverageSampling
 
 def test_average_sampling_repr(average_sampling: AverageSampling):
     # WHEN
-    expected_string = "AverageSampling()"
+    expected_string = "AverageSampling"
     actual_string = average_sampling.__repr__()
 
     # THEN

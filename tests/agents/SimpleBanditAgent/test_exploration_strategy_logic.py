@@ -72,7 +72,7 @@ def test_pick_action(greedy_strategy: EpsilonGreedy, first_rng_16: np.random.Gen
 
 def test_epsilon_greedy_string(greedy_strategy: EpsilonGreedy):
     # WHEN
-    expected_string = "EpsilonGreedy(epsilon=0.0)"
+    expected_string = "EpsilonGreedy(eps=0.0)"
     actual_string = greedy_strategy.__repr__()
 
     # THEN
