@@ -152,4 +152,4 @@ class BanditAgent(BaseBanditAgent):
         return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_strategy.__repr__()})"
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(seed={self._seed},\n\tenv={self.env.__repr__()},\n\taction_value={self._action_value_strategy.__repr__()},\n\texploration={self._exploration_strategy.__repr__()}\n)"
+        return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self.env.__repr__()},\n\ta_v={self._action_value_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"

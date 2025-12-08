@@ -166,4 +166,4 @@ class KArmEnvironment(Env, BaseBanditEnv):
         return f"KArm(s={self.seed},dft={self._drift_stategy.__class__.__name__})"
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(\n\tdrift={self._drift_stategy.__repr__()},\n\treward={self._reward_strategy.__repr__()},\n\tseed={self.seed},\n\tarms={self.number_of_arms}\n)"
+        return f"KArm(\n\tdft={self._drift_stategy.__repr__()},\n\tr={self._reward_strategy.__repr__()},\n\ts={self.seed},\n\tarms={self.number_of_arms}\n)"

@@ -30,4 +30,4 @@ class AverageSampling(ActionValueStrategy):
         self._action_counts = np.zeros(shape=env.number_of_arms)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
+        return f"{self.__class__.__name__}"
