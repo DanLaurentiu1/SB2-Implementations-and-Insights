@@ -163,7 +163,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
 
     # removed reward strategy representation because of windows file length limit (!)
     def __str__(self):
-        return f"{self.__class__.__name__}(s={self.seed},dft={self._drift_stategy.__class__.__name__})"
+        return f"KArm(s={self.seed},dft={self._drift_stategy.__class__.__name__})"
 
     def __repr__(self):
         return f"{self.__class__.__name__}(\n\tdrift={self._drift_stategy.__repr__()},\n\treward={self._reward_strategy.__repr__()},\n\tseed={self.seed},\n\tarms={self.number_of_arms}\n)"
