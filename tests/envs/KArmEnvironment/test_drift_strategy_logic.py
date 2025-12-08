@@ -154,7 +154,7 @@ def test_gaussian_drift_drift_is_deterministic(
 
 def test_gaussian_drift_representation(gaussian_drift: GaussianDrift):
     # WHEN
-    expected_string = "GaussianDrift(mean=0, variance=0.01)"
+    expected_string = "GaussianDrift(mean=0,var=0.01)"
     actual_string = gaussian_drift.__repr__()
     # THEN
     assert expected_string == actual_string

@@ -188,7 +188,7 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
 
 def test_agent_repr(agent: BanditAgent):
     # WHEN
-    expected_string = "BanditAgent(seed=16,\n\tenv=KArmEnvironment(\n\tdrift=NoDrift(),\n\treward=GaussianReward(variance=1),\n\tseed=16,\n\tarms=3\n),\n\taction_value=AverageSampling(),\n\texploration=EpsilonGreedy(epsilon=0.1)\n)"
+    expected_string = "BanditAgent(s=16,\n\tenv=KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1),\n\ts=16,\n\tarms=3\n),\n\ta_v=AverageSampling,\n\texpl=EpsilonGreedy(eps=0.1)\n)"
     actual_string = agent.__repr__()
 
     # THEN
@@ -197,7 +197,7 @@ def test_agent_repr(agent: BanditAgent):
 
 def test_agent_str(agent: BanditAgent):
     # WHEN
-    expected_string = "BanditAgent(seed=16)"
+    expected_string = "BanditAgent(s=16,expl=EpsilonGreedy,a_v=AverageSampling)"
     actual_string = agent.__str__()
 
     # THEN

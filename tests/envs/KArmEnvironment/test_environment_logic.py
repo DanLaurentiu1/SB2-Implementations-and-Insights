@@ -200,7 +200,7 @@ def test_step_non_stationary_optimal_arm_stays_consistent(
 
 def test_environment_to_string_method(stationary_env: KArmEnvironment):
     # WHEN
-    expected_string = "KArmEnvironment(seed=16, arms=2)"
+    expected_string = "KArm(s=16,dft=NoDrift)"
     actual_string = stationary_env.__str__()
 
     # THEN
@@ -209,7 +209,9 @@ def test_environment_to_string_method(stationary_env: KArmEnvironment):
 
 def test_environment_to_repr_method(stationary_env: KArmEnvironment):
     # WHEN
-    expected_string = "KArmEnvironment(\n\tdrift=NoDrift(),\n\treward=GaussianReward(variance=1),\n\tseed=16,\n\tarms=2\n)"
+    expected_string = (
+        "KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1),\n\ts=16,\n\tarms=2\n)"
+    )
     actual_string = stationary_env.__repr__()
 
     # THEN

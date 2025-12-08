@@ -2,7 +2,7 @@ _target_: algorithms.bandits.implementations.BanditAgent.BanditAgent
 params:
   action_value_strategy:
     _target_: algorithms.bandits.implementations.action_value.ERWAverageSampling.ERWAverageSampling
-    alpha: 0.1
+    alpha: 0.9
   exploration_strategy:
     _target_: algorithms.bandits.implementations.exploration.EpsilonGreedy.EpsilonGreedy
     epsilon: 0.1

@@ -1,7 +1,7 @@
 _target_: environments.custom_envs.BanditEnvs.KArmEnvironment.KArmEnvironment
 params:
   number_of_arms: 10
-  max_steps: 1000
+  max_steps: 10000
   drift_strategy:
     _target_: environments.custom_envs.BanditEnvs.drift.GaussianDrift.GaussianDrift
     mean: 0
