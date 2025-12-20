@@ -166,7 +166,7 @@ class BanditAgent(BaseBanditAgent):
             )
 
     def __str__(self):
-        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_update_strategy.__repr__()})"
+        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_update_strategy.__repr__()},init={self._action_value_initialization_strategy.__repr__()})"
 
     def __repr__(self):
         return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self.env.__repr__()},\n\ta_v={self._action_value_update_strategy.__repr__()},\n\tinit={self._action_value_initialization_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"
