@@ -4,10 +4,16 @@ from typing import Callable, List, Optional
 import numpy as np
 from gymnasium.utils.seeding import np_random
 
-from algorithms.bandits.implementations.action_value.ActionValueStrategy import (
-    ActionValueStrategy,
+from algorithms.bandits.implementations.action_value_initialization.ActionValueInitializationStrategy import (
+    ActionValueInitializationStrategy,
 )
-from algorithms.bandits.implementations.action_value.AverageSampling import (
+from algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization import (
+    NormalActionValueInitialization,
+)
+from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
+    ActionValueUpdateStrategy,
+)
+from algorithms.bandits.implementations.action_value_update.AverageSampling import (
     AverageSampling,
 )
 from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
@@ -29,9 +35,12 @@ class BanditAgent(BaseBanditAgent):
         exploration_factory: Optional[
             Callable[..., ExplorationExploitationStrategy]
         ] = partial(EpsilonGreedy, epsilon=0.1),
-        action_value_factory: Optional[Callable[..., ActionValueStrategy]] = partial(
-            AverageSampling
-        ),
+        action_value_update_factory: Optional[
+            Callable[..., ActionValueUpdateStrategy]
+        ] = partial(AverageSampling),
+        action_value_initialization_factory: Optional[
+            Callable[..., ActionValueInitializationStrategy]
+        ] = partial(NormalActionValueInitialization),
     ):
         self._validate_input(seed=seed, metrics=metrics)
 
@@ -39,14 +48,19 @@ class BanditAgent(BaseBanditAgent):
         self._seed: int = seed
         self._metrics: List[str] = metrics
         self._n_arms: int = self._env.number_of_arms
-        self._q_values: np.ndarray = np.zeros(shape=self._n_arms)
 
         self._exploration_strategy = exploration_factory()
         self._exploration_strategy._setup(env=self._env)
 
-        self._action_value_strategy = action_value_factory()
-        self._action_value_strategy._setup(env=self._env)
+        self._action_value_update_strategy = action_value_update_factory()
+        self._action_value_update_strategy._setup(env=self._env)
 
+        self._action_value_initialization_strategy = (
+            action_value_initialization_factory()
+        )
+        self._action_value_initialization_strategy._setup(env=self._env)
+
+        self._init_action_values()
         self._reset_rng()
 
     # ==============
@@ -87,13 +101,13 @@ class BanditAgent(BaseBanditAgent):
 
         while not terminated and not truncated:
             action: int = self._exploration_strategy.pick_action(
-                rng=self.np_random,
+                rng=self._np_random,
                 action_space=self.env.action_space,
                 q_values=self._q_values,
             )
 
             _, reward, terminated, truncated, info = self._env.step(action=action)
-            self._action_value_strategy.update_action_value(
+            self._action_value_update_strategy.update_action_value(
                 q_values=self._q_values,
                 action=action,
                 reward=reward,
@@ -131,8 +145,11 @@ class BanditAgent(BaseBanditAgent):
     # Internals
     # ==============
 
+    def _init_action_values(self):
+        self._q_values = self._action_value_initialization_strategy.init_action_values()
+
     def _reset_rng(self):
-        self.np_random, _ = np_random(self._seed)
+        self._np_random, _ = np_random(self._seed)
 
     def _set_seed(self, new_seed: int):
         self._seed = new_seed
@@ -149,7 +166,7 @@ class BanditAgent(BaseBanditAgent):
             )
 
     def __str__(self):
-        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_strategy.__repr__()})"
+        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_update_strategy.__repr__()})"
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self.env.__repr__()},\n\ta_v={self._action_value_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"
+        return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self.env.__repr__()},\n\ta_v={self._action_value_update_strategy.__repr__()},\n\tinit={self._action_value_initialization_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"
