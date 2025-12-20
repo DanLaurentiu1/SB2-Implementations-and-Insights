@@ -10,10 +10,16 @@ import pytest
 from algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization import (
     NormalActionValueInitialization,
 )
+from algorithms.bandits.implementations.action_value_initialization.OptimisticActionValueInitialization import (
+    OptimisticActionValueInitialization,
+)
 from algorithms.bandits.implementations.action_value_update.AverageSampling import (
     AverageSampling,
 )
 from algorithms.bandits.implementations.BanditAgent import BanditAgent
+from algorithms.bandits.implementations.action_value_update.ERWAverageSampling import (
+    ERWAverageSampling,
+)
 from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
 from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
 from utils.exceptions.logic_exceptions import AgentLogicException
@@ -55,6 +61,28 @@ def agent(stationary_env: KArmEnvironment) -> BanditAgent:
         exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
         action_value_update_factory=partial(AverageSampling),
         action_value_initialization_factory=partial(NormalActionValueInitialization),
+    )
+
+
+# GIVEN
+@pytest.fixture
+def optimistic_agent(stationary_env: KArmEnvironment) -> BanditAgent:
+    return BanditAgent(
+        env=stationary_env,
+        seed=16,
+        metrics=[
+            "step",
+            "action",
+            "reward",
+            "total_reward",
+            "average_reward",
+            "optimal_chosen_percentage",
+        ],
+        exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+        action_value_update_factory=partial(ERWAverageSampling, epsilon=0.1),
+        action_value_initialization_factory=partial(
+            OptimisticActionValueInitialization
+        ),
     )
 
 
@@ -201,7 +229,9 @@ def test_agent_repr(agent: BanditAgent):
 
 def test_agent_str(agent: BanditAgent):
     # WHEN
-    expected_string = "BanditAgent(s=16,expl=EpsilonGreedy,a_v=AverageSampling)"
+    expected_string = (
+        "BanditAgent(s=16,expl=EpsilonGreedy,a_v=AverageSampling,init=NormalAVInit)"
+    )
     actual_string = agent.__str__()
 
     # THEN
@@ -332,3 +362,7 @@ def test_full_run_advanced(agent: BanditAgent, full_run_values_json_path: Path):
         )
         assert actual["q_values"] == pytest.approx(expected["q_values"], abs=5e-2)
         assert actual["action_freq"] == expected["action_freq"]
+
+
+def test_optimistic_agent_initialization_full_run():
+    pass

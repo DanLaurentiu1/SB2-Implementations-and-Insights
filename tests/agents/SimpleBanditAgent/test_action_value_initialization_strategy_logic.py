@@ -100,7 +100,7 @@ def test_optimistic_initialization_has_expected_values(
     variance = test_env.reward_strategy.variance
     optimal_arm_mean = test_env.arm_means[test_env.optimal_arm]
     expected_q_values = np.full(
-        shape=test_env.number_of_arms, fill_value=optimal_arm_mean + 5 * variance
+        shape=test_env.number_of_arms, fill_value=optimal_arm_mean + 4 * variance
     )
     actual_q_values = (
         optimistic_action_value_initialization_strategy.init_action_values()
