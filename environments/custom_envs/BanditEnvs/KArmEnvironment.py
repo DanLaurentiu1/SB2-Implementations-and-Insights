@@ -76,6 +76,14 @@ class KArmEnvironment(Env, BaseBanditEnv):
     def observation_space(self) -> Space:
         return self._observation_space
 
+    @property
+    def reward_strategy(self) -> RewardStrategy:
+        return self._reward_strategy
+
+    @property
+    def drift_strategy(self) -> DriftStrategy:
+        return self._drift_stategy
+
     # ==============
     # Public API
     # ==============

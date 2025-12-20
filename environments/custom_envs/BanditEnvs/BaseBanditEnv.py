@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 import numpy as np
 from gymnasium import Space
 
+from environments.custom_envs.BanditEnvs.drift.DriftStrategy import DriftStrategy
+from environments.custom_envs.BanditEnvs.reward.RewardStrategy import RewardStrategy
+
 
 class BaseBanditEnv(ABC):
     @property
@@ -38,6 +41,16 @@ class BaseBanditEnv(ABC):
     @property
     @abstractmethod
     def observation_space(self) -> Space:
+        pass
+
+    @property
+    @abstractmethod
+    def reward_strategy(self) -> RewardStrategy:
+        pass
+
+    @property
+    @abstractmethod
+    def drift_strategy(self) -> DriftStrategy:
         pass
 
     @abstractmethod
