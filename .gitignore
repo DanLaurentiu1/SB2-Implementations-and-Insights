@@ -212,3 +212,6 @@ multirun/
 
 # Any experiment log/output
 algorithms/bandits/experiments/
+
+# Other
+.vscode/settings.json
