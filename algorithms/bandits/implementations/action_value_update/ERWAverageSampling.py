@@ -1,12 +1,12 @@
 import numpy as np
 
-from algorithms.bandits.implementations.action_value.ActionValueStrategy import (
-    ActionValueStrategy,
+from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
+    ActionValueUpdateStrategy,
 )
 from utils.exceptions.logic_exceptions import ActionValueLogicException
 
 
-class ERWAverageSampling(ActionValueStrategy):
+class ERWAverageSampling(ActionValueUpdateStrategy):
     def __init__(self, alpha: float, **kwargs):
         super().__init__(**kwargs)
         self._validate_input(alpha=alpha)

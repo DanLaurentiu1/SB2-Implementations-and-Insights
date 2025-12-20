@@ -5,7 +5,7 @@ import numpy as np
 from environments.custom_envs.BanditEnvs import BaseBanditEnv
 
 
-class ActionValueStrategy(ABC):
+class ActionValueUpdateStrategy(ABC):
     def __init__(self, **kwargs):
         pass
 

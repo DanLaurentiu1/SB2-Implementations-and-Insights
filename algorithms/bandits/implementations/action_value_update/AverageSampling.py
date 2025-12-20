@@ -1,12 +1,12 @@
 import numpy as np
 
-from algorithms.bandits.implementations.action_value.ActionValueStrategy import (
-    ActionValueStrategy,
+from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
+    ActionValueUpdateStrategy,
 )
 from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 
 
-class AverageSampling(ActionValueStrategy):
+class AverageSampling(ActionValueUpdateStrategy):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
