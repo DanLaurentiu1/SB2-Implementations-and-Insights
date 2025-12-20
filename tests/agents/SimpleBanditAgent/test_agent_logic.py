@@ -7,7 +7,10 @@ from typing import cast
 import numpy as np
 import pytest
 
-from algorithms.bandits.implementations.action_value.AverageSampling import (
+from algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization import (
+    NormalActionValueInitialization,
+)
+from algorithms.bandits.implementations.action_value_update.AverageSampling import (
     AverageSampling,
 )
 from algorithms.bandits.implementations.BanditAgent import BanditAgent
@@ -50,7 +53,8 @@ def agent(stationary_env: KArmEnvironment) -> BanditAgent:
             "optimal_chosen_percentage",
         ],
         exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
-        action_value_factory=partial(AverageSampling),
+        action_value_update_factory=partial(AverageSampling),
+        action_value_initialization_factory=partial(NormalActionValueInitialization),
     )
 
 
@@ -80,7 +84,7 @@ def test_agent_invalid_seed_throws_exception(stationary_env: KArmEnvironment):
                 "optimal_chosen_percentage",
             ],
             exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
-            action_value_factory=partial(AverageSampling),
+            action_value_update_factory=partial(AverageSampling),
         )
 
     assert "Invalid seed=-12. This number must be positive." in str(
@@ -95,7 +99,7 @@ def test_agent_invalid_metrics_throws_exception(stationary_env: KArmEnvironment)
             seed=12,
             metrics=[],
             exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
-            action_value_factory=partial(AverageSampling),
+            action_value_update_factory=partial(AverageSampling),
         )
 
     assert "Invalid metrics=[]. The array should not be empty." in str(
@@ -125,22 +129,22 @@ def test_constructor_initializes_fields(
     assert isinstance(agent._exploration_strategy, EpsilonGreedy)
     assert agent._exploration_strategy.epsilon == 0.1
 
-    assert isinstance(agent._action_value_strategy, AverageSampling)
-    assert isinstance(agent._action_value_strategy._action_counts, np.ndarray)
+    assert isinstance(agent._action_value_update_strategy, AverageSampling)
+    assert isinstance(agent._action_value_update_strategy._action_counts, np.ndarray)
     assert (
-        agent._action_value_strategy._action_counts.shape[0]
+        agent._action_value_update_strategy._action_counts.shape[0]
         == stationary_env.number_of_arms
     )
-    assert np.all(agent._action_value_strategy._action_counts == 0)
+    assert np.all(agent._action_value_update_strategy._action_counts == 0)
 
 
 def test_set_seed_changes_rng_state(agent: BanditAgent):
     # WHEN
-    random_1 = agent.np_random.random()
+    random_1 = agent._np_random.random()
     agent._set_seed(42)
-    random_2 = agent.np_random.random()
+    random_2 = agent._np_random.random()
     agent._set_seed(42)
-    random_3 = agent.np_random.random()
+    random_3 = agent._np_random.random()
 
     # THEN
     assert random_1 != random_2
@@ -188,7 +192,7 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
 
 def test_agent_repr(agent: BanditAgent):
     # WHEN
-    expected_string = "BanditAgent(s=16,\n\tenv=KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1),\n\ts=16,\n\tarms=3\n),\n\ta_v=AverageSampling,\n\texpl=EpsilonGreedy(eps=0.1)\n)"
+    expected_string = "BanditAgent(s=16,\n\tenv=KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1),\n\ts=16,\n\tarms=3\n),\n\ta_v=AverageSampling,\n\tinit=NormalAVInit,\n\texpl=EpsilonGreedy(eps=0.1)\n)"
     actual_string = agent.__repr__()
 
     # THEN
@@ -263,7 +267,7 @@ def test_full_run_simple_skip_logging(
 
 
 def test_full_run_advanced(agent: BanditAgent, full_run_values_json_path: Path):
-    action_value_strategy = cast(AverageSampling, agent._action_value_strategy)
+    action_value_strategy = cast(AverageSampling, agent._action_value_update_strategy)
     exploration_strategy = cast(EpsilonGreedy, agent._exploration_strategy)
 
     # WHEN
@@ -275,7 +279,7 @@ def test_full_run_advanced(agent: BanditAgent, full_run_values_json_path: Path):
 
     while not terminated and not truncated:
         action: int = exploration_strategy.pick_action(
-            rng=agent.np_random,
+            rng=agent._np_random,
             action_space=agent.env.action_space,
             q_values=agent._q_values,
         )

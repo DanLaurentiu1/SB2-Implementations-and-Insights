@@ -6,7 +6,7 @@ params:
     _target_: algorithms.bandits.implementations.exploration.EpsilonGreedy.EpsilonGreedy
     epsilon: 0.1
   action_value_initialization_strategy:
-    _target_: algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization.NormalActionValueInitialization
+    _target_: algorithms.bandits.implementations.action_value_initialization.OptimisticActionValueInitialization.OptimisticActionValueInitialization
   metrics:
   - step
   - action

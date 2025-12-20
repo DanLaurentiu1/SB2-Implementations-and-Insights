@@ -2,7 +2,10 @@
 omit =
     */__init__.py
     tests/*
-    utlis/*
+
+    utils/logging/FakeLogger.py
+    utils/logging/BaseLogger.py
+
     environments/custom_envs/BanditEnvs/drift/DriftStrategy.py
     environments/custom_envs/BanditEnvs/reward/RewardStrategy.py
 
@@ -11,7 +14,8 @@ omit =
     algorithms/bandits/implementations/BaseBanditAgent.py
     
     algorithms/bandits/implementations/exploration/ExplorationExploitationStrategy.py
-    algorithms/bandits/implementations/action_value/ActionValueStrategy.py
+    algorithms/bandits/implementations/action_value_update/ActionValueStrategy.py
+    algorithms/bandits/implementations/action_value_initialization/ActionValueInitializationStrategy.py
     
 branch = True
 

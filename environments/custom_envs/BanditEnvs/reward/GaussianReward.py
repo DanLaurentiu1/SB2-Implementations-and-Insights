@@ -10,6 +10,10 @@ class GaussianReward(RewardStrategy):
 
         self._variance = variance
 
+    @property
+    def variance(self) -> np.float64:
+        return self._variance
+
     def _validate_input(self, variance: np.float64):
         max_float = np.finfo(np.float64).max
         if variance < 0:

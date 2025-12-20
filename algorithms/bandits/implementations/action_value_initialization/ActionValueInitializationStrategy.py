@@ -5,7 +5,7 @@ import numpy as np
 from environments.custom_envs.BanditEnvs import BaseBanditEnv
 
 
-class ActionValueStrategy(ABC):
+class ActionValueInitializationStrategy(ABC):
     def __init__(self, **kwargs):
         pass
 
@@ -13,9 +13,7 @@ class ActionValueStrategy(ABC):
         pass
 
     @abstractmethod
-    def update_action_value(
-        self, q_values: np.ndarray, action: int, reward: float
-    ) -> None:
+    def init_action_values(self) -> np.ndarray:
         pass
 
     @abstractmethod

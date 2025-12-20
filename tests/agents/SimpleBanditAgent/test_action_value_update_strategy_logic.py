@@ -3,10 +3,10 @@ from contextlib import contextmanager
 import numpy as np
 import pytest
 
-from algorithms.bandits.implementations.action_value.AverageSampling import (
+from algorithms.bandits.implementations.action_value_update.AverageSampling import (
     AverageSampling,
 )
-from algorithms.bandits.implementations.action_value.ERWAverageSampling import (
+from algorithms.bandits.implementations.action_value_update.ERWAverageSampling import (
     ERWAverageSampling,
 )
 from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
