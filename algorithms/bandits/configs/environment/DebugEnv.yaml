@@ -1,0 +1,9 @@
+_target_: environments.custom_envs.BanditEnvs.KArmEnvironment.KArmEnvironment
+params:
+  number_of_arms: 4
+  max_steps: 10
+  drift_strategy:
+    _target_: environments.custom_envs.BanditEnvs.drift.NoDrift.NoDrift
+  reward_strategy:
+    _target_: environments.custom_envs.BanditEnvs.reward.GaussianReward.GaussianReward
+    variance: 1
