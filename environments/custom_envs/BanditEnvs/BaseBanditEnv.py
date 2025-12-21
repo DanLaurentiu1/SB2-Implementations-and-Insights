@@ -58,7 +58,9 @@ class BaseBanditEnv(ABC):
         pass
 
     @abstractmethod
-    def step(self, action: int):
+    def step(
+        self, action: int
+    ) -> tuple[np.float64, np.float64, bool, bool, dict[str, bool]]:
         pass
 
     @abstractmethod

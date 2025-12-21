@@ -6,4 +6,4 @@ params:
     _target_: environments.custom_envs.BanditEnvs.drift.NoDrift.NoDrift
   reward_strategy:
     _target_: environments.custom_envs.BanditEnvs.reward.GaussianReward.GaussianReward
-    variance: 1
+    variance: 1.0

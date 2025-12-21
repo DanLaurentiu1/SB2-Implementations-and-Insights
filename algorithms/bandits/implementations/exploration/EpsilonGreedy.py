@@ -8,8 +8,8 @@ from utils.exceptions.logic_exceptions import ExplorationLogicException
 
 
 class EpsilonGreedy(ExplorationExploitationStrategy):
-    def __init__(self, epsilon: float, **kwargs):
-        self._validate_input(epsilon=epsilon)
+    def __init__(self, epsilon: np.float64, **kwargs):
+        self._validate_input(epsilon=float(epsilon))
 
         self._epsilon = epsilon
 
@@ -18,7 +18,7 @@ class EpsilonGreedy(ExplorationExploitationStrategy):
     # ==============
 
     @property
-    def epsilon(self) -> float:
+    def epsilon(self) -> np.float64:
         return self._epsilon
 
     # ==============
