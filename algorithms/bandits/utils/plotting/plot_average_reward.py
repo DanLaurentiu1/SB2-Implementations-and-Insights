@@ -13,7 +13,13 @@ def plot_average_reward(folder_path: Path):
         # "aggregated_over_eps=0.csv": ("green", 850, 0.925, 0),
     }
     all_csvs: List[Path] = []
-
+    plt.rcParams.update(
+        {
+            "text.usetex": False,
+            "font.family": "serif",
+            "mathtext.fontset": "cm",
+        }
+    )
     plt.figure(figsize=(8, 5))
 
     for csv_file in folder_path.iterdir():
@@ -34,7 +40,8 @@ def plot_average_reward(folder_path: Path):
     plt.xticks(np.arange(0, 10000 + 1, 1000))
     plt.xlabel("Steps")
     plt.ylabel("Average Reward")
-    plt.show()
+    plt.savefig(folder_path / "new_plot.pdf", format="pdf", bbox_inches="tight")
+    # plt.show()
 
 
 if __name__ == "__main__":
