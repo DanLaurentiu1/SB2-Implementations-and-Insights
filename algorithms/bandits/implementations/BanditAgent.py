@@ -34,7 +34,7 @@ class BanditAgent(BaseBanditAgent):
         metrics: List[str],
         exploration_factory: Optional[
             Callable[..., ExplorationExploitationStrategy]
-        ] = partial(EpsilonGreedy, epsilon=0.1),
+        ] = partial(EpsilonGreedy, epsilon=np.float64(0.1)),
         action_value_update_factory: Optional[
             Callable[..., ActionValueUpdateStrategy]
         ] = partial(AverageSampling),
@@ -94,7 +94,7 @@ class BanditAgent(BaseBanditAgent):
     def run_episode(self, logger: BaseLogger, log_every: int = 1):
         self._env.reset()
 
-        total_reward: float = 0.0
+        total_reward: np.float64 = 0.0
         optimal_chosen_counter: int = 0
         total_steps: int = 0
         terminated = truncated = False
@@ -120,7 +120,7 @@ class BanditAgent(BaseBanditAgent):
             if total_steps % log_every == 0 or terminated or truncated:
                 row = {
                     "step": total_steps,
-                    "action": int(action),
+                    "action": action,
                     "reward": float(reward),
                     "total_reward": float(total_reward),
                     "average_reward": float(total_reward) / total_steps,
@@ -134,10 +134,10 @@ class BanditAgent(BaseBanditAgent):
                 logger.log(row=row)
 
         return {
-            "episode_reward": total_reward,
+            "episode_reward": float(total_reward),
             "steps": total_steps,
             "optimal_chosen_percentage": (
-                optimal_chosen_counter / total_steps if total_steps else 0.0
+                float(optimal_chosen_counter) / total_steps if total_steps else 0.0
             ),
         }
 
@@ -166,7 +166,7 @@ class BanditAgent(BaseBanditAgent):
             )
 
     def __str__(self):
-        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_update_strategy.__repr__()})"
+        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_update_strategy.__repr__()},init={self._action_value_initialization_strategy.__repr__()})"
 
     def __repr__(self):
         return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self.env.__repr__()},\n\ta_v={self._action_value_update_strategy.__repr__()},\n\tinit={self._action_value_initialization_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"

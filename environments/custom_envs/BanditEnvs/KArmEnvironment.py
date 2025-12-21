@@ -22,7 +22,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
         max_steps: int = 1000,
         drift_factory: Optional[Callable[..., DriftStrategy]] = partial(NoDrift),
         reward_factory: Optional[Callable[..., RewardStrategy]] = partial(
-            GaussianReward, variance=1
+            GaussianReward, variance=np.float64(1)
         ),
     ):
         self._validate_input(
@@ -100,15 +100,16 @@ class KArmEnvironment(Env, BaseBanditEnv):
         info = {"optimal_arm": self._optimal_arm}
         return self._get_obs(), info
 
-    def step(self, action: int):
+    def step(
+        self, action: int
+    ) -> tuple[np.float64, np.float64, bool, bool, dict[str, bool]]:
         self._ensure_not_terminated()
         self._validate_action(action=action)
 
-        reward = float(
-            self._reward_strategy.get_reward(
-                arm_mean=self._arm_means[action], rng=self._np_random
-            )
+        reward = self._reward_strategy.get_reward(
+            arm_mean=self._arm_means[action], rng=self._np_random
         )
+
         self._pulls += 1
         if self._pulls == self._max_steps:
             self._terminated = True
@@ -133,7 +134,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
 
     def _get_new_arms(self):
         self._arm_means = self._np_random.normal(
-            loc=0.0, scale=1.0, size=self._number_of_arms
+            loc=np.float64(0.0), scale=np.float64(1.0), size=self._number_of_arms
         )
         self._optimal_arm = int(np.argmax(self._arm_means))
 

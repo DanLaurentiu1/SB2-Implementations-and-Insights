@@ -7,9 +7,9 @@ from utils.exceptions.logic_exceptions import ActionValueLogicException
 
 
 class ERWAverageSampling(ActionValueUpdateStrategy):
-    def __init__(self, alpha: float, **kwargs):
+    def __init__(self, alpha: np.float64, **kwargs):
         super().__init__(**kwargs)
-        self._validate_input(alpha=alpha)
+        self._validate_input(alpha=float(alpha))
 
         self._alpha = alpha
 
@@ -18,7 +18,7 @@ class ERWAverageSampling(ActionValueUpdateStrategy):
     # ==============
 
     def update_action_value(
-        self, q_values: np.ndarray, action: int, reward: float
+        self, q_values: np.ndarray, action: int, reward: np.float64
     ) -> None:
         q_values[action] += self._alpha * (reward - q_values[action])
 

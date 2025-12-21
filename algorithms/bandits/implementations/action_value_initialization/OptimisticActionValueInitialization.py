@@ -15,7 +15,7 @@ class OptimisticActionValueInitialization(ActionValueInitializationStrategy):
         self._env_reward_variance = env.reward_strategy.variance
 
     def init_action_values(self) -> np.ndarray:
-        optimistic_value = self._optimal_arm_mean_value + 5 * self._env_reward_variance
+        optimistic_value = self._optimal_arm_mean_value + 4 * self._env_reward_variance
         self._q_values = np.full(
             shape=self._number_of_arms,
             fill_value=optimistic_value,
