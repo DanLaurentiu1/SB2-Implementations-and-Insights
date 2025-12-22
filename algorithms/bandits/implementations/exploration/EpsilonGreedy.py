@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 from gymnasium import Space
 
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
@@ -8,25 +9,34 @@ from utils.exceptions.logic_exceptions import ExplorationLogicException
 
 
 class EpsilonGreedy(ExplorationExploitationStrategy):
+    # =================
+    # Type Annotations
+    # =================
+
+    _epsilon: np.float64
+
     def __init__(self, epsilon: np.float64, **kwargs):
         self._validate_input(epsilon=float(epsilon))
 
         self._epsilon = epsilon
 
-    # ==============
+    # =================
     # Properties
-    # ==============
+    # =================
 
     @property
     def epsilon(self) -> np.float64:
         return self._epsilon
 
-    # ==============
+    # =================
     # Public API
-    # ==============
+    # =================
 
     def pick_action(
-        self, rng: np.random.Generator, action_space: Space, q_values: np.ndarray
+        self,
+        rng: np.random.Generator,
+        action_space: Space,
+        q_values: npt.NDArray[np.float64],
     ) -> int:
         if rng.random() < self._epsilon:
             action = action_space.sample()
@@ -34,11 +44,11 @@ class EpsilonGreedy(ExplorationExploitationStrategy):
             action = np.argmax(q_values)
         return int(action)
 
-    # ==============
+    # =================
     # Internals
-    # ==============
+    # =================
 
-    def _validate_input(self, epsilon: float):
+    def _validate_input(self, epsilon: float) -> None:
         if not (0.0 <= epsilon <= 1.0):
             raise ExplorationLogicException(
                 f"Invalid epsilon={epsilon}. Epsilon must be between 0 and 1."

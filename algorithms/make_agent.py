@@ -26,7 +26,7 @@ def make_factory(
     | ActionValueInitializationStrategy,
 ]:
     strategy_class = hydra.utils.get_class(cfg["_target_"])
-    params = {k: v for k, v in cfg.items() if k != "_target_"}
+    params = {str(k): v for k, v in cfg.items() if k != "_target_"}
     strategy_factory = partial(strategy_class, **params)
     return strategy_factory
 

@@ -1,7 +1,8 @@
 from functools import partial
-from typing import Callable, Optional
+from typing import Callable
 
 import numpy as np
+import numpy.typing as npt
 from gymnasium import Env, Space
 from gymnasium.spaces import Discrete
 from gymnasium.utils.seeding import np_random
@@ -15,13 +16,31 @@ from utils.exceptions.logic_exceptions import EnvironmentLogicException
 
 
 class KArmEnvironment(Env, BaseBanditEnv):
+    # =================
+    # Type Annotations
+    # =================
+
+    _terminated: bool
+    _truncated: bool
+    _number_of_arms: int
+    _seed: int
+    _pulls: int
+    _max_steps: int
+    _np_random: np.random.Generator
+    _observation_space: Discrete
+    _action_space: Discrete
+    _drift_stategy: DriftStrategy
+    _reward_strategy: RewardStrategy
+    _optimal_arm: int
+    _arm_means: npt.NDArray[np.float64]
+
     def __init__(
         self,
         number_of_arms: int = 10,
         seed: int = 16,
         max_steps: int = 1000,
-        drift_factory: Optional[Callable[..., DriftStrategy]] = partial(NoDrift),
-        reward_factory: Optional[Callable[..., RewardStrategy]] = partial(
+        drift_factory: Callable[..., DriftStrategy] = partial(NoDrift),
+        reward_factory: Callable[..., RewardStrategy] = partial(
             GaussianReward, variance=np.float64(1)
         ),
     ):
@@ -29,12 +48,12 @@ class KArmEnvironment(Env, BaseBanditEnv):
             number_of_arms=number_of_arms, seed=seed, max_steps=max_steps
         )
 
-        self._terminated = False
-        self._truncated = False
-        self._number_of_arms = number_of_arms
-        self._seed = seed
-        self._pulls = 0
-        self._max_steps = max_steps
+        self._terminated: bool = False
+        self._truncated: bool = False
+        self._number_of_arms: int = number_of_arms
+        self._seed: int = seed
+        self._pulls: int = 0
+        self._max_steps: int = max_steps
         self._np_random, _ = np_random(self._seed)
         self._observation_space = Discrete(1, seed=self._seed)
         self._action_space = Discrete(n=self._number_of_arms, seed=self._seed, start=0)
@@ -44,9 +63,9 @@ class KArmEnvironment(Env, BaseBanditEnv):
 
         self._get_new_arms()
 
-    # ==============
+    # =================
     # Properties
-    # ==============
+    # =================
 
     @property
     def number_of_arms(self) -> int:
@@ -84,11 +103,11 @@ class KArmEnvironment(Env, BaseBanditEnv):
     def drift_strategy(self) -> DriftStrategy:
         return self._drift_stategy
 
-    # ==============
+    # =================
     # Public API
-    # ==============
+    # =================
 
-    def reset(self, *, seed=None):
+    def reset(self, *, seed: int | None = None):
         super().reset(seed=seed)
         if seed is not None:
             self._seed = seed
@@ -118,7 +137,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
         self._arm_means = self._drift_stategy.drift(
             arm_means=self._arm_means, rng=self._np_random
         )
-        self._optimal_arm = np.argmax(self._arm_means)
+        self._optimal_arm = int(np.argmax(self._arm_means))
 
         return (
             self._get_obs(),
@@ -128,9 +147,9 @@ class KArmEnvironment(Env, BaseBanditEnv):
             self._get_info(optimal_arm_chosen=is_optimal),
         )
 
-    # ==============
+    # =================
     # Internals
-    # ==============
+    # =================
 
     def _get_new_arms(self):
         self._arm_means = self._np_random.normal(
@@ -172,7 +191,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
 
     # removed reward strategy representation because of windows file length limit (!)
     def __str__(self):
-        return f"KArm(s={self.seed},dft={self._drift_stategy.__class__.__name__})"
+        return f"KArm(s={self._seed},dft={self._drift_stategy.__class__.__name__})"
 
     def __repr__(self):
-        return f"KArm(\n\tdft={self._drift_stategy.__repr__()},\n\tr={self._reward_strategy.__repr__()},\n\ts={self.seed},\n\tarms={self.number_of_arms}\n)"
+        return f"KArm(\n\tdft={self._drift_stategy.__repr__()},\n\tr={self._reward_strategy.__repr__()},\n\ts={self._seed},\n\tarms={self._number_of_arms}\n)"

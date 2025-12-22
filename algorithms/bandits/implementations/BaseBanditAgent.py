@@ -13,7 +13,7 @@ class BaseBanditAgent(ABC):
         pass
 
     @abstractmethod
-    def __str__(self):
+    def __str__(self) -> str:
         pass
 
     @property

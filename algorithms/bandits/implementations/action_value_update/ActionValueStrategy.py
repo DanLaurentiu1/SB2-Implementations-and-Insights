@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
-
-from environments.custom_envs.BanditEnvs import BaseBanditEnv
+import numpy.typing as npt
+from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 
 
 class ActionValueUpdateStrategy(ABC):
@@ -14,7 +14,7 @@ class ActionValueUpdateStrategy(ABC):
 
     @abstractmethod
     def update_action_value(
-        self, q_values: np.ndarray, action: int, reward: float
+        self, q_values: npt.NDArray[np.float64], action: int, reward: float
     ) -> None:
         pass
 

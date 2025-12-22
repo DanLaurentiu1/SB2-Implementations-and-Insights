@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 from algorithms.bandits.implementations.action_value_initialization.ActionValueInitializationStrategy import (
     ActionValueInitializationStrategy,
 )
@@ -12,7 +13,7 @@ class NormalActionValueInitialization(ActionValueInitializationStrategy):
     def _setup(self, env: BaseBanditEnv) -> None:
         self._number_of_arms = env.number_of_arms
 
-    def init_action_values(self) -> np.ndarray:
+    def init_action_values(self) -> npt.NDArray[np.float64]:
         self._q_values = np.zeros(shape=self._number_of_arms)
         return self._q_values
 

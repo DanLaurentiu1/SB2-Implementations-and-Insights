@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
-
-from environments.custom_envs.BanditEnvs import BaseBanditEnv
+import numpy.typing as npt
+from environments.custom_envs.BanditEnvs.BaseBanditEnv import BaseBanditEnv
 
 
 class ActionValueInitializationStrategy(ABC):
@@ -13,7 +13,7 @@ class ActionValueInitializationStrategy(ABC):
         pass
 
     @abstractmethod
-    def init_action_values(self) -> np.ndarray:
+    def init_action_values(self) -> npt.NDArray[np.float64]:
         pass
 
     @abstractmethod

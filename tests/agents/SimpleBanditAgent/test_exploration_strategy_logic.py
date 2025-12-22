@@ -19,7 +19,7 @@ def not_raises():
 
 @pytest.fixture
 def greedy_strategy() -> EpsilonGreedy:
-    return EpsilonGreedy(epsilon=0.0)
+    return EpsilonGreedy(epsilon=np.float64(0.0))
 
 
 # GIVEN
@@ -39,7 +39,7 @@ def second_rng_16() -> np.random.Generator:
 def test_epsilon_greedy_negative_epsilon_throws_exception():
     # WHEN
     with pytest.raises(ExplorationLogicException) as exception_output:
-        EpsilonGreedy(epsilon=-1.0)
+        EpsilonGreedy(epsilon=np.float64(-1.0))
 
     # THEN
     assert "Invalid epsilon=-1.0. Epsilon must be between 0 and 1." in str(

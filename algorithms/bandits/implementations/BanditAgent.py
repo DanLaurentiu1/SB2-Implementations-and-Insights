@@ -1,7 +1,8 @@
 from functools import partial
-from typing import Callable, List, Optional
+from typing import Callable, List
 
 import numpy as np
+import numpy.typing as npt
 from gymnasium.utils.seeding import np_random
 
 from algorithms.bandits.implementations.action_value_initialization.ActionValueInitializationStrategy import (
@@ -27,27 +28,41 @@ from utils.logging.BaseLogger import BaseLogger
 
 
 class BanditAgent(BaseBanditAgent):
+    # =================
+    # Type Annotations
+    # =================
+
+    _env: BaseBanditEnv
+    _seed: int
+    _metrics: List[str]
+    _n_arms: int
+    _exploration_strategy: ExplorationExploitationStrategy
+    _action_value_update_strategy: ActionValueUpdateStrategy
+    _action_value_initialization_strategy: ActionValueInitializationStrategy
+    _np_random: np.random.Generator
+    _q_values: npt.NDArray[np.float64]
+
     def __init__(
         self,
         env: BaseBanditEnv,
         seed: int,
         metrics: List[str],
-        exploration_factory: Optional[
-            Callable[..., ExplorationExploitationStrategy]
-        ] = partial(EpsilonGreedy, epsilon=np.float64(0.1)),
-        action_value_update_factory: Optional[
-            Callable[..., ActionValueUpdateStrategy]
-        ] = partial(AverageSampling),
-        action_value_initialization_factory: Optional[
-            Callable[..., ActionValueInitializationStrategy]
+        exploration_factory: Callable[..., ExplorationExploitationStrategy] = partial(
+            EpsilonGreedy, epsilon=np.float64(0.1)
+        ),
+        action_value_update_factory: Callable[..., ActionValueUpdateStrategy] = partial(
+            AverageSampling
+        ),
+        action_value_initialization_factory: Callable[
+            ..., ActionValueInitializationStrategy
         ] = partial(NormalActionValueInitialization),
     ):
         self._validate_input(seed=seed, metrics=metrics)
 
-        self._env: BaseBanditEnv = env
-        self._seed: int = seed
-        self._metrics: List[str] = metrics
-        self._n_arms: int = self._env.number_of_arms
+        self._env = env
+        self._seed = seed
+        self._metrics = metrics
+        self._n_arms = self._env.number_of_arms
 
         self._exploration_strategy = exploration_factory()
         self._exploration_strategy._setup(env=self._env)
@@ -63,9 +78,9 @@ class BanditAgent(BaseBanditAgent):
         self._init_action_values()
         self._reset_rng()
 
-    # ==============
+    # =================
     # Properties
-    # ==============
+    # =================
 
     @property
     def env(self) -> BaseBanditEnv:
@@ -84,17 +99,17 @@ class BanditAgent(BaseBanditAgent):
         return self._n_arms
 
     @property
-    def q_values(self) -> np.ndarray:
+    def q_values(self) -> npt.NDArray[np.float64]:
         return self._q_values
 
-    # ==============
+    # =================
     # Public API
-    # ==============
+    # =================
 
-    def run_episode(self, logger: BaseLogger, log_every: int = 1):
+    def run_episode(self, logger: BaseLogger, log_every: int = 1) -> None:
         self._env.reset()
 
-        total_reward: np.float64 = 0.0
+        total_reward: np.float64 = np.float64(0)
         optimal_chosen_counter: int = 0
         total_steps: int = 0
         terminated = truncated = False
@@ -102,7 +117,7 @@ class BanditAgent(BaseBanditAgent):
         while not terminated and not truncated:
             action: int = self._exploration_strategy.pick_action(
                 rng=self._np_random,
-                action_space=self.env.action_space,
+                action_space=self._env.action_space,
                 q_values=self._q_values,
             )
 
@@ -133,29 +148,21 @@ class BanditAgent(BaseBanditAgent):
                 }
                 logger.log(row=row)
 
-        return {
-            "episode_reward": float(total_reward),
-            "steps": total_steps,
-            "optimal_chosen_percentage": (
-                float(optimal_chosen_counter) / total_steps if total_steps else 0.0
-            ),
-        }
-
-    # ==============
+    # =================
     # Internals
-    # ==============
+    # =================
 
-    def _init_action_values(self):
+    def _init_action_values(self) -> None:
         self._q_values = self._action_value_initialization_strategy.init_action_values()
 
-    def _reset_rng(self):
+    def _reset_rng(self) -> None:
         self._np_random, _ = np_random(self._seed)
 
-    def _set_seed(self, new_seed: int):
+    def _set_seed(self, new_seed: int) -> None:
         self._seed = new_seed
         self._reset_rng()
 
-    def _validate_input(self, seed: int, metrics: List[str]):
+    def _validate_input(self, seed: int, metrics: List[str]) -> None:
         if seed < 0:
             raise AgentLogicException(
                 f"Invalid seed={seed}. This number must be positive."
@@ -165,8 +172,8 @@ class BanditAgent(BaseBanditAgent):
                 f"Invalid metrics={metrics}. The array should not be empty."
             )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_update_strategy.__repr__()},init={self._action_value_initialization_strategy.__repr__()})"
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self.env.__repr__()},\n\ta_v={self._action_value_update_strategy.__repr__()},\n\tinit={self._action_value_initialization_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self._env.__repr__()},\n\ta_v={self._action_value_update_strategy.__repr__()},\n\tinit={self._action_value_initialization_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"
