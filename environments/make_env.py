@@ -11,7 +11,7 @@ from environments.custom_envs.BanditEnvs.reward.RewardStrategy import RewardStra
 
 def make_factory(cfg: DictConfig) -> Callable[..., DriftStrategy | RewardStrategy]:
     strategy_class = hydra.utils.get_class(cfg["_target_"])
-    params = {k: v for k, v in cfg.items() if k != "_target_"}
+    params = {str(k): v for k, v in cfg.items() if k != "_target_"}
     strategy_factory = partial(strategy_class, **params)
     return strategy_factory
 

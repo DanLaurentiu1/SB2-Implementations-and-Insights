@@ -84,10 +84,10 @@ def test_gaussian_drift_can_call_all_methods(
 def test_gaussian_drift_negative_variance_throws_exception():
     # WHEN
     with pytest.raises(DriftingLogicException) as exception_output:
-        GaussianDrift(mean=1.0, variance=-1)
+        GaussianDrift(mean=np.float64(1.0), variance=np.float64(-1))
 
     # THEN
-    assert "Invalid variance=-1. Variance cannot be negative." in str(
+    assert "Invalid variance=-1.0. Variance cannot be negative." in str(
         exception_output.value
     )
 
@@ -95,7 +95,7 @@ def test_gaussian_drift_negative_variance_throws_exception():
 def test_gaussian_drift_out_of_bounds_variance_throws_exception():
     # WHEN
     with pytest.raises(DriftingLogicException) as exception_output:
-        GaussianDrift(mean=1.0, variance=1e309)
+        GaussianDrift(mean=np.float64(1.0), variance=np.float64(1e309))
 
     # THEN
     assert "Invalid variance=inf. Variance must be finite and within ±" in str(
@@ -106,7 +106,7 @@ def test_gaussian_drift_out_of_bounds_variance_throws_exception():
 def test_gaussian_drift_out_of_bounds_mean_throws_exception():
     # WHEN
     with pytest.raises(DriftingLogicException) as exception_output:
-        GaussianDrift(mean=1e390, variance=1.0)
+        GaussianDrift(mean=np.float64(1e390), variance=np.float64(1.0))
 
     # THEN
     assert "Invalid mean=inf. Mean must be finite and within ±" in str(
@@ -154,7 +154,7 @@ def test_gaussian_drift_drift_is_deterministic(
 
 def test_gaussian_drift_representation(gaussian_drift: GaussianDrift):
     # WHEN
-    expected_string = "GaussianDrift(mean=0,var=0.01)"
+    expected_string = "GaussianDrift(mean=0.0,var=0.01)"
     actual_string = gaussian_drift.__repr__()
     # THEN
     assert expected_string == actual_string

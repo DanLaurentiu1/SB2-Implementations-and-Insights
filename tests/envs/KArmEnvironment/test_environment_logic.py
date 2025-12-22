@@ -25,7 +25,9 @@ def non_stationary_env() -> KArmEnvironment:
         number_of_arms=10,
         seed=16,
         max_steps=100,
-        drift_factory=partial(GaussianDrift, mean=0, variance=0.01),
+        drift_factory=partial(
+            GaussianDrift, mean=np.float64(0), variance=np.float64(0.01)
+        ),
     )
 
 
@@ -210,7 +212,7 @@ def test_environment_to_string_method(stationary_env: KArmEnvironment):
 def test_environment_to_repr_method(stationary_env: KArmEnvironment):
     # WHEN
     expected_string = (
-        "KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1),\n\ts=16,\n\tarms=2\n)"
+        "KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1.0),\n\ts=16,\n\tarms=2\n)"
     )
     actual_string = stationary_env.__repr__()
 

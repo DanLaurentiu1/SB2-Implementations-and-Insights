@@ -19,7 +19,7 @@ def not_raises():
 # GIVEN
 @pytest.fixture
 def gaussian_reward() -> GaussianReward:
-    return GaussianReward(variance=1)
+    return GaussianReward(variance=np.float64(1))
 
 
 # GIVEN
@@ -56,7 +56,7 @@ def test_gaussian_reward_can_call_methods(
 def test_gaussian_reward_negative_variance_throws_exception():
     # WHEN
     with pytest.raises(RewardLogicException) as exception_output:
-        GaussianReward(variance=-1.0)
+        GaussianReward(variance=np.float64(-1.0))
 
     # THEN
     assert "Invalid variance=-1.0. Variance cannot be negative." in str(
@@ -67,7 +67,7 @@ def test_gaussian_reward_negative_variance_throws_exception():
 def test_gaussian_reward_infinite_variance_throws_exception():
     # WHEN
     with pytest.raises(RewardLogicException) as exception_output:
-        GaussianReward(variance=1e309)
+        GaussianReward(variance=np.float64(1e309))
 
     # THEN
     assert "Invalid variance=inf. Variance must be finite and within ±" in str(

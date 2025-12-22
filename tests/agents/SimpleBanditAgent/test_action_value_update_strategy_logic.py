@@ -38,7 +38,7 @@ def average_sampling(stationary_env: KArmEnvironment) -> AverageSampling:
 # GIVEN
 @pytest.fixture
 def erw_average_sampling(stationary_env: KArmEnvironment) -> ERWAverageSampling:
-    action_value_strategy = ERWAverageSampling(alpha=1)
+    action_value_strategy = ERWAverageSampling(alpha=np.float64(1))
     action_value_strategy._setup(env=stationary_env)
     return action_value_strategy
 
@@ -46,10 +46,10 @@ def erw_average_sampling(stationary_env: KArmEnvironment) -> ERWAverageSampling:
 def test_alpha_negative_throws_exception():
     # WHEN
     with pytest.raises(ActionValueLogicException) as exception_output:
-        ERWAverageSampling(alpha=-2)
+        ERWAverageSampling(alpha=np.float64(-2))
 
     # THEN
-    assert "Invalid alpha=-2. Alpha must be between 1 and 0." in str(
+    assert "Invalid alpha=-2.0. Alpha must be between 1 and 0." in str(
         exception_output.value
     )
 
@@ -57,14 +57,16 @@ def test_alpha_negative_throws_exception():
 def test_average_sampling_update_action_values(average_sampling: AverageSampling):
     # WHEN
     q_values = np.array([0.0, 0.0, 0.0])
-    average_sampling.update_action_value(q_values, action=0, reward=0.5)
+    average_sampling.update_action_value(q_values, action=0, reward=np.float64(0.5))
 
     # THEN
     assert average_sampling._action_counts[0] == 1
     assert q_values[0] == pytest.approx(0.5)
 
     # WHEN
-    average_sampling.update_action_value(q_values=q_values, action=0, reward=2.5)
+    average_sampling.update_action_value(
+        q_values=q_values, action=0, reward=np.float64(2.5)
+    )
 
     # THEN
     assert average_sampling._action_counts[0] == 2
@@ -85,13 +87,15 @@ def test_erw_average_sampling_update_action_values(
 ):
     # WHEN
     q_values = np.array([0.0, 0.0, 0.0])
-    erw_average_sampling.update_action_value(q_values, action=0, reward=0.5)
+    erw_average_sampling.update_action_value(q_values, action=0, reward=np.float64(0.5))
 
     # THEN
     assert q_values[0] == pytest.approx(0.5)
 
     # WHEN
-    erw_average_sampling.update_action_value(q_values=q_values, action=0, reward=2.5)
+    erw_average_sampling.update_action_value(
+        q_values=q_values, action=0, reward=np.float64(2.5)
+    )
 
     # THEN
     assert q_values[0] == pytest.approx(2.5)
@@ -99,7 +103,7 @@ def test_erw_average_sampling_update_action_values(
 
 def test_erw_average_sampling_repr(erw_average_sampling: ERWAverageSampling):
     # WHEN
-    expected_string = "ERWAverageSampling(alpha=1)"
+    expected_string = "ERWAverageSampling(alpha=1.0)"
     actual_string = erw_average_sampling.__repr__()
 
     # THEN

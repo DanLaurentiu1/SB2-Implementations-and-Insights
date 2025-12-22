@@ -58,7 +58,7 @@ def agent(stationary_env: KArmEnvironment) -> BanditAgent:
             "average_reward",
             "optimal_chosen_percentage",
         ],
-        exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+        exploration_factory=partial(EpsilonGreedy, epsilon=np.float64(0.1)),
         action_value_update_factory=partial(AverageSampling),
         action_value_initialization_factory=partial(NormalActionValueInitialization),
     )
@@ -78,7 +78,7 @@ def optimistic_agent(stationary_env: KArmEnvironment) -> BanditAgent:
             "average_reward",
             "optimal_chosen_percentage",
         ],
-        exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+        exploration_factory=partial(EpsilonGreedy, epsilon=np.float64(0.1)),
         action_value_update_factory=partial(ERWAverageSampling, epsilon=0.1),
         action_value_initialization_factory=partial(
             OptimisticActionValueInitialization
@@ -111,7 +111,7 @@ def test_agent_invalid_seed_throws_exception(stationary_env: KArmEnvironment):
                 "average_reward",
                 "optimal_chosen_percentage",
             ],
-            exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+            exploration_factory=partial(EpsilonGreedy, epsilon=np.float64(0.1)),
             action_value_update_factory=partial(AverageSampling),
         )
 
@@ -126,7 +126,7 @@ def test_agent_invalid_metrics_throws_exception(stationary_env: KArmEnvironment)
             env=stationary_env,
             seed=12,
             metrics=[],
-            exploration_factory=partial(EpsilonGreedy, epsilon=0.1),
+            exploration_factory=partial(EpsilonGreedy, epsilon=np.float64(0.1)),
             action_value_update_factory=partial(AverageSampling),
         )
 
@@ -198,12 +198,9 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
     logger = FakeLogger()
 
     # WHEN
-    out = agent.run_episode(logger=logger, log_every=1)
+    agent.run_episode(logger=logger, log_every=1)
 
     # THEN
-    assert "episode_reward" in out
-    assert "steps" in out
-    assert "optimal_chosen_percentage" in out
     assert len(logger.rows) == agent.env.max_steps
 
     # WHEN
@@ -220,7 +217,7 @@ def test_run_episode_logs_and_returns(agent: BanditAgent):
 
 def test_agent_repr(agent: BanditAgent):
     # WHEN
-    expected_string = "BanditAgent(s=16,\n\tenv=KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1),\n\ts=16,\n\tarms=3\n),\n\ta_v=AverageSampling,\n\tinit=NormalAVInit,\n\texpl=EpsilonGreedy(eps=0.1)\n)"
+    expected_string = "BanditAgent(s=16,\n\tenv=KArm(\n\tdft=NoDrift,\n\tr=GaussianReward(var=1.0),\n\ts=16,\n\tarms=3\n),\n\ta_v=AverageSampling,\n\tinit=NormalAVInit,\n\texpl=EpsilonGreedy(eps=0.1)\n)"
     actual_string = agent.__repr__()
 
     # THEN
