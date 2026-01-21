@@ -21,6 +21,9 @@ from algorithms.bandits.implementations.action_value_update.ERWAverageSampling i
     ERWAverageSampling,
 )
 from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
+    ExplorationExploitationContext,
+)
 from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
 from utils.exceptions.logic_exceptions import AgentLogicException
 from utils.logging.FakeLogger import FakeLogger
@@ -62,6 +65,18 @@ def agent(stationary_env: KArmEnvironment) -> BanditAgent:
         action_value_update_factory=partial(AverageSampling),
         action_value_initialization_factory=partial(NormalActionValueInitialization),
     )
+
+
+# GIVEN
+@pytest.fixture
+def context(agent: BanditAgent) -> ExplorationExploitationContext:
+    context: ExplorationExploitationContext = ExplorationExploitationContext(
+        rng=agent._np_random,
+        action_space=agent.env.action_space,
+        q_values=agent.q_values,
+        time_step=0,
+    )
+    return context
 
 
 # GIVEN
@@ -293,7 +308,11 @@ def test_full_run_simple_skip_logging(
         )
 
 
-def test_full_run_advanced(agent: BanditAgent, full_run_values_json_path: Path):
+def test_full_run_advanced(
+    agent: BanditAgent,
+    full_run_values_json_path: Path,
+    context: ExplorationExploitationContext,
+):
     action_value_strategy = cast(AverageSampling, agent._action_value_update_strategy)
     exploration_strategy = cast(EpsilonGreedy, agent._exploration_strategy)
 
@@ -305,11 +324,8 @@ def test_full_run_advanced(agent: BanditAgent, full_run_values_json_path: Path):
     terminated = truncated = False
 
     while not terminated and not truncated:
-        action: int = exploration_strategy.pick_action(
-            rng=agent._np_random,
-            action_space=agent.env.action_space,
-            q_values=agent._q_values,
-        )
+        context.update(time_step=total_steps)
+        action: int = exploration_strategy.pick_action(exploration_context=context)
 
         _, reward, terminated, truncated, info = agent.env.step(action=action)
         action_value_strategy.update_action_value(
