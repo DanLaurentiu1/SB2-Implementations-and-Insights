@@ -18,6 +18,9 @@ from algorithms.bandits.implementations.action_value_update.AverageSampling impo
     AverageSampling,
 )
 from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
+from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
+    ExplorationExploitationContext,
+)
 from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
@@ -41,6 +44,7 @@ class BanditAgent(BaseBanditAgent):
     _action_value_initialization_strategy: ActionValueInitializationStrategy
     _np_random: np.random.Generator
     _q_values: npt.NDArray[np.float64]
+    _exploration_context: ExplorationExploitationContext
 
     def __init__(
         self,
@@ -77,6 +81,7 @@ class BanditAgent(BaseBanditAgent):
 
         self._init_action_values()
         self._reset_rng()
+        self._init_exploration_context()
 
     # =================
     # Properties
@@ -115,10 +120,9 @@ class BanditAgent(BaseBanditAgent):
         terminated = truncated = False
 
         while not terminated and not truncated:
+            self._exploration_context.update(time_step=total_steps)
             action: int = self._exploration_strategy.pick_action(
-                rng=self._np_random,
-                action_space=self._env.action_space,
-                q_values=self._q_values,
+                exploration_context=self._exploration_context
             )
 
             _, reward, terminated, truncated, info = self._env.step(action=action)
@@ -151,6 +155,14 @@ class BanditAgent(BaseBanditAgent):
     # =================
     # Internals
     # =================
+
+    def _init_exploration_context(self) -> None:
+        self._exploration_context = ExplorationExploitationContext(
+            q_values=self._q_values,
+            time_step=0,
+            action_space=self._env.action_space,
+            rng=self._np_random,
+        )
 
     def _init_action_values(self) -> None:
         self._q_values = self._action_value_initialization_strategy.init_action_values()
