@@ -1,7 +1,8 @@
 import numpy as np
-import numpy.typing as npt
-from gymnasium import Space
 
+from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
+    ExplorationExploitationContext,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
 )
@@ -32,12 +33,11 @@ class EpsilonGreedy(ExplorationExploitationStrategy):
     # Public API
     # =================
 
-    def pick_action(
-        self,
-        rng: np.random.Generator,
-        action_space: Space,
-        q_values: npt.NDArray[np.float64],
-    ) -> int:
+    def pick_action(self, exploration_context: ExplorationExploitationContext) -> int:
+        rng = exploration_context.rng
+        action_space = exploration_context.action_space
+        q_values = exploration_context.q_values
+
         if rng.random() < self._epsilon:
             action = action_space.sample()
         else:
