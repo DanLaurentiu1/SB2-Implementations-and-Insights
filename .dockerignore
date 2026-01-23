@@ -1,0 +1,28 @@
+# IDEs and configs
+.hydra/
+.vscode/
+.gitignore
+.coverage
+.coveragerc
+
+# Caches
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# Test and Documentation
+tests/
+README.md
+TODO.md
+
+# Large Data and Artifacts
+**/experiments/
+**/reproducibility/
+**/multirun/
+**/proofs/
+**/reports/
+**/examples/
+
+# Logs
+*.log
+run.log

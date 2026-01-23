@@ -1,6 +1,6 @@
 _target_: algorithms.bandits.implementations.BanditAgent.BanditAgent
 params:
-  action_value_strategy:
+  action_value_update_strategy:
     _target_: algorithms.bandits.implementations.action_value_update.ERWAverageSampling.ERWAverageSampling
     alpha: 0.000001
   exploration_strategy:
