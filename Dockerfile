@@ -8,8 +8,11 @@ COPY pyproject.toml poetry.lock ./
 
 RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi --no-root
 
+ENV PYTHONPATH=/app
+
 COPY . .
 
 RUN chmod +x entrypoint.sh
+RUN sed -i 's/\r$//' ./entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
