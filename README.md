@@ -1,7 +1,7 @@
 <a id="readme-top"></a>
 
 <p align="center">
-  <span style="font-size: 2em; font-weight: bold;">SB2: Implementations & Insights</span><br>
+  <span style="font-size: 4em; font-weight: bold;">SB2: Implementations & Insights</span><br>
   <br />
   <img src="https://img.shields.io/badge/python-3.11-blue" alt="Python Version">
   <img src="https://img.shields.io/github/issues/DanLaurentiu1/SB2-Implementations-and-Insights" alt="Issues">
@@ -25,7 +25,6 @@
 </p>
 
 ## About
-
 In this repository, you will find clean, modular implementations of algorithms from the [Sutton & Barto: Reinforcement Learning (2nd Edition)](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf) textbook. Reproductions of exercises, plot and tables are provided, along with simple ablation reports, small extensions to some algorithm's modules and, for the most popular concepts, theoretical proofs.
 
 The code in this project is centered around modularization and ease-of-use. Everything runs (slowly) on the CPU, no GPU modifications and optimizations. All of the modules are fully tested, with integrations between modules (agent-environment) mostly tested through fully deterministic mocked runs.
@@ -41,11 +40,9 @@ The repository is structured around a four-stage synthesis of my learning proces
 </p>
 
 ## Getting Started (Local Setup)
-
 If you prefer to run the project natively. This project uses [Poetry](https://python-poetry.org/) for dependency management and packaging.
 
 ### Prerequisites
-
 * **Python 3.11+**
 * **Poetry** (Install via `pip install poetry` or follow the [official guide](https://python-poetry.org/docs/#installation))
 
@@ -67,13 +64,11 @@ If you prefer to run the project natively. This project uses [Poetry](https://py
     poetry run pytest tests/
     ```
 
-
 <p align="center">
   <img src="assets/grass.png" width="100%">
 </p>
 
 ## Usage
-
 This repository allows you to run algorithms in two modes: Standard (training/testing) and Reproduction (benchmarks). 
 
 ### Execution Modes & Storage
@@ -84,7 +79,7 @@ This repository allows you to run algorithms in two modes: Standard (training/te
 
 > **Note:** The `run.name` (experiment folder) and `repro_folder_name` do not need to match.
 
----
+<br>
 
 ### 1. Standard Execution
 Run the default multi-armed-banits algorithm using the default configuration.
@@ -93,34 +88,38 @@ Run the default multi-armed-banits algorithm using the default configuration.
 poetry run python -m algorithms.bandits.run
 ```
 
-### 2. Reproduction Execution
+<br>
 
+### 2. Reproduction Execution
 To save reproduction artifacts (plots, tables), you must append the `repro_folder_name`.
 
 ```bash
 poetry run python -m algorithms.bandits.run_reproducibility +repro_folder_name=new_folder
 ```
 
-### 3. Overriding Configuration Columns
+<br>
 
+### 3. Overriding Configuration Columns
 By default, Hydra loads `[algorithm]/configs/default.yaml`. You can override specific values (like the run name) directly from the CLI:
 
 ```bash
 poetry run python -m algorithms.bandits.run run.name=new-run-name
 ```
 
+<br>
+
 > **Recommended:** The `run.name` option defines the experiment directory where logs will be saved. Always change `run.name`.
 
 ### 4. Overriding Whole Configs
-
 To use a completely different configuration file:
 
 ```bash
 poetry run python -m algorithms.bandits.run --config-name=different_config
 ```
 
-### 5. Multi-runs (Parameter Sweeps)
+<br>
 
+### 5. Multi-runs (Parameter Sweeps)
 Hydra supports multi-runs using the cartesian product of all overridden parameters.
 
 ```bash
@@ -130,6 +129,8 @@ python -m algorithms.bandits.run -m run.env_seed=range(1,2001) algorithm=algo_A,
 
 > **Important**: The `-m` flag must be placed exactly before the parameters.
 
+
+<br>
 
 ### 6. Docker Execution
 The Dockerfile utilizes an `entrypoint.sh` script to parse arguments. <br>
@@ -145,12 +146,13 @@ docker compose run --rm sim bandits normal run.env_seed=range(1,2001) algorithm=
 
 > **Important**: `<algorithm_name>` must match the directory structure.
 
+<br>
+
 _For more detailed examples, visit the `[algorithm]/examples/` directories._
 
 <p align="center">
   <img src="assets/grass.png" width="100%">
 </p>
-
 
 ## Project Structure
 
