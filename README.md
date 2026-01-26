@@ -1,7 +1,10 @@
 <a id="readme-top"></a>
 
 <p align="center">
-  <b><font size="12">SB2: Implementations & Insights</font></b><br/>
+  <br />
+  <b><font size="7">SB2: Implementations & Insights</font></b>
+  <br />
+  <br />  
   <img src="https://img.shields.io/badge/python-3.11-blue" alt="Python Version">
   <img src="https://img.shields.io/github/issues/DanLaurentiu1/SB2-Implementations-and-Insights" alt="Issues">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
@@ -20,7 +23,7 @@
 </div>
 
 <p align="center">
-  <img src="assets/grass.png" width="100%">
+  <img src="assets/grass.png" width="100%" height="auto">
 </p>
 
 ## About
@@ -35,7 +38,7 @@ The repository is structured around a four-stage synthesis of my learning proces
 * **Extension** – developing (small and simple) enhancements
 
 <p align="center">
-  <img src="assets/grass.png" width="100%">
+  <img src="assets/grass.png" width="100%" height="auto">
 </p>
 
 ## Getting Started (Local Setup)
@@ -64,7 +67,7 @@ If you prefer to run the project natively. This project uses [Poetry](https://py
     ```
 
 <p align="center">
-  <img src="assets/grass.png" width="100%">
+  <img src="assets/grass.png" width="100%" height="auto">
 </p>
 
 ## Usage
@@ -150,7 +153,7 @@ docker compose run --rm sim bandits normal run.env_seed=range(1,2001) algorithm=
 _For more detailed examples, visit the `[algorithm]/examples/` directories._
 
 <p align="center">
-  <img src="assets/grass.png" width="100%">
+  <img src="assets/grass.png" width="100%" height="auto">
 </p>
 
 ## Project Structure
