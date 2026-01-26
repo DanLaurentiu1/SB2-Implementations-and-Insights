@@ -1,0 +1,1 @@
+python -m algorithms.bandits.run_reproducibility --config-name=non_stationary_default -m algorithm=BaseBandit,ERW_Bandit run.agent_seed=16,17,18,19,20 run.env_seed=16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35 +repro_folder_name=Exercise_2.5 run.name=Ex_2.5

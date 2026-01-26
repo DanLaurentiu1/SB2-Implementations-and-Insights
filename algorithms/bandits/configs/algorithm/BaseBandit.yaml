@@ -1,0 +1,17 @@
+_target_: algorithms.bandits.implementations.BanditAgent.BanditAgent
+params:
+  action_value_update_strategy:
+    _target_: algorithms.bandits.implementations.action_value_update.AverageSampling.AverageSampling
+  exploration_strategy:
+    _target_: algorithms.bandits.implementations.exploration.EpsilonGreedy.EpsilonGreedy
+    epsilon: 0.1
+  action_value_initialization_strategy:
+    _target_: algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization.NormalActionValueInitialization
+  metrics:
+  - step
+  - action
+  - reward
+  - total_reward
+  - average_reward
+  - optimal_chosen_counter
+  - optimal_chosen_percentage

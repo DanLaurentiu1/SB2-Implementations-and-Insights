@@ -1,0 +1,8 @@
+defaults:
+  - algorithm: ERW_Bandit
+  - environment: NonStationary_10ArmTestBed
+  - run: BaseRun
+
+hydra:
+  run:
+    dir: .

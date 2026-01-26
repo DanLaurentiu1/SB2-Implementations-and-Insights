@@ -1,0 +1,108 @@
+[
+    {
+        "bonuses": [],
+        "scores": [],
+        "action_picked": 0
+    },
+    {
+        "bonuses": [],
+        "scores": [],
+        "action_picked": 1
+    },
+    {
+        "bonuses": [],
+        "scores": [],
+        "action_picked": 2
+    },
+    {
+        "bonuses": [
+            1.17,
+            1.17,
+            1.17
+        ],
+        "scores": [
+            3.17,
+            0.17,
+            4.17
+        ],
+        "action_picked": 2
+    },
+    {
+        "bonuses": [
+            1.26,
+            1.26,
+            0.89
+        ],
+        "scores": [
+            3.26,
+            0.26,
+            5.39
+        ],
+        "action_picked": 2
+    },
+    {
+        "bonuses": [
+            1.33,
+            1.33,
+            0.77
+        ],
+        "scores": [
+            3.33,
+            0.33,
+            5.07
+        ],
+        "action_picked": 2
+    },
+    {
+        "bonuses": [
+            1.39,
+            1.39,
+            0.69
+        ],
+        "scores": [
+            3.39,
+            0.39,
+            4.89
+        ],
+        "action_picked": 2
+    },
+    {
+        "bonuses": [
+            1.44,
+            1.44,
+            0.64
+        ],
+        "scores": [
+            3.44,
+            0.44,
+            4.24
+        ],
+        "action_picked": 2
+    },
+    {
+        "bonuses": [
+            1.48,
+            1.48,
+            0.6
+        ],
+        "scores": [
+            3.48,
+            0.48,
+            3.6
+        ],
+        "action_picked": 2
+    },
+    {
+        "bonuses": [
+            1.51,
+            1.51,
+            0.57
+        ],
+        "scores": [
+            3.51,
+            0.51,
+            3.42
+        ],
+        "action_picked": 0
+    }
+]
