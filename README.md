@@ -1,8 +1,7 @@
 <a id="readme-top"></a>
 
 <p align="center">
-  <span style="font-size: 4em; font-weight: bold;">SB2: Implementations & Insights</span><br>
-  <br />
+  <b><font size="7">SB2: Implementations & Insights</font></b><br/>
   <img src="https://img.shields.io/badge/python-3.11-blue" alt="Python Version">
   <img src="https://img.shields.io/github/issues/DanLaurentiu1/SB2-Implementations-and-Insights" alt="Issues">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
@@ -79,7 +78,7 @@ This repository allows you to run algorithms in two modes: Standard (training/te
 
 > **Note:** The `run.name` (experiment folder) and `repro_folder_name` do not need to match.
 
-<br>
+<br/>
 
 ### 1. Standard Execution
 Run the default multi-armed-banits algorithm using the default configuration.
@@ -88,7 +87,7 @@ Run the default multi-armed-banits algorithm using the default configuration.
 poetry run python -m algorithms.bandits.run
 ```
 
-<br>
+<br/>
 
 ### 2. Reproduction Execution
 To save reproduction artifacts (plots, tables), you must append the `repro_folder_name`.
@@ -97,7 +96,7 @@ To save reproduction artifacts (plots, tables), you must append the `repro_folde
 poetry run python -m algorithms.bandits.run_reproducibility +repro_folder_name=new_folder
 ```
 
-<br>
+<br/>
 
 ### 3. Overriding Configuration Columns
 By default, Hydra loads `[algorithm]/configs/default.yaml`. You can override specific values (like the run name) directly from the CLI:
@@ -106,9 +105,9 @@ By default, Hydra loads `[algorithm]/configs/default.yaml`. You can override spe
 poetry run python -m algorithms.bandits.run run.name=new-run-name
 ```
 
-<br>
-
 > **Recommended:** The `run.name` option defines the experiment directory where logs will be saved. Always change `run.name`.
+
+<br/>
 
 ### 4. Overriding Whole Configs
 To use a completely different configuration file:
@@ -117,7 +116,7 @@ To use a completely different configuration file:
 poetry run python -m algorithms.bandits.run --config-name=different_config
 ```
 
-<br>
+<br/>
 
 ### 5. Multi-runs (Parameter Sweeps)
 Hydra supports multi-runs using the cartesian product of all overridden parameters.
@@ -130,10 +129,10 @@ python -m algorithms.bandits.run -m run.env_seed=range(1,2001) algorithm=algo_A,
 > **Important**: The `-m` flag must be placed exactly before the parameters.
 
 
-<br>
+<br/>
 
 ### 6. Docker Execution
-The Dockerfile utilizes an `entrypoint.sh` script to parse arguments. <br>
+The Dockerfile utilizes an `entrypoint.sh` script to parse arguments. <br/>
 
 The syntax is: `docker compose run --rm <service_name> <algorithm_name> [mode] [overrides]`
 
@@ -146,7 +145,7 @@ docker compose run --rm sim bandits normal run.env_seed=range(1,2001) algorithm=
 
 > **Important**: `<algorithm_name>` must match the directory structure.
 
-<br>
+<br/>
 
 _For more detailed examples, visit the `[algorithm]/examples/` directories._
 
