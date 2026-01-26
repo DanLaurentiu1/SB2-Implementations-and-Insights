@@ -3,7 +3,7 @@ name = "sb2-implementations-and-insights"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Dan Laurentiu",email = "danlaurentiuwork@gmail.com"}
+    {name = "Dan Laurentiu"}
 ]
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
