@@ -5,6 +5,10 @@ import numpy.typing as npt
 
 
 class DriftStrategy(ABC):
+    # =================
+    # Public API
+    # =================
+
     @abstractmethod
     def drift(
         self, arm_means: npt.NDArray[np.float64], rng: np.random.Generator
@@ -14,6 +18,10 @@ class DriftStrategy(ABC):
     @abstractmethod
     def reset(self) -> None:
         pass
+
+    # =================
+    # Internals
+    # =================
 
     @abstractmethod
     def __repr__(self) -> str:

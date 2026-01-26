@@ -9,11 +9,19 @@ class ActionValueInitializationStrategy(ABC):
     def __init__(self, **kwargs):
         pass
 
-    def _setup(self, env: BaseBanditEnv) -> None:
-        pass
+    # ==============
+    # Public API
+    # ==============
 
     @abstractmethod
     def init_action_values(self) -> npt.NDArray[np.float64]:
+        pass
+
+    # ==============
+    # Internals
+    # ==============
+
+    def _setup(self, env: BaseBanditEnv) -> None:
         pass
 
     @abstractmethod
