@@ -1,7 +1,7 @@
 <a id="readme-top"></a>
 
 <p align="center">
-  <b><font size="7">SB2: Implementations & Insights</font></b><br/>
+  <b><font size="12">SB2: Implementations & Insights</font></b><br/>
   <img src="https://img.shields.io/badge/python-3.11-blue" alt="Python Version">
   <img src="https://img.shields.io/github/issues/DanLaurentiu1/SB2-Implementations-and-Insights" alt="Issues">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
