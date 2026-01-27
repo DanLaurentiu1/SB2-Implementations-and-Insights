@@ -1,0 +1,1 @@
+python -m algorithms.bandits.run_reproducibility -m run.env_seed=range(16,2016) algorithm=BaseBandit,UCBBandit run.name=Figure_2.4 +repro_folder_name=Figure_2.4
