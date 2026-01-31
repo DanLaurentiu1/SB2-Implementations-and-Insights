@@ -39,9 +39,7 @@ def test_get_new_arms_match_when_same_seed(
     secondary_env_seed_16._get_new_arms()
 
     # THEN
-    assert np.array_equal(
-        primary_env_seed_16.arm_means, secondary_env_seed_16.arm_means
-    )
+    assert np.array_equal(primary_env_seed_16.arms, secondary_env_seed_16.arms)
 
 
 def test_get_new_arms_do_not_match_when_different_seed(
@@ -53,10 +51,7 @@ def test_get_new_arms_do_not_match_when_different_seed(
     primary_env_seed_17._get_new_arms()
 
     # THEN
-    assert (
-        np.array_equal(primary_env_seed_16.arm_means, primary_env_seed_17.arm_means)
-        is False
-    )
+    assert np.array_equal(primary_env_seed_16.arms, primary_env_seed_17.arms) is False
 
 
 def test_get_new_arms_reward_matches_when_same_seed(
@@ -75,9 +70,9 @@ def test_reset_none_does_not_change_internal_seeding(
     primary_env_seed_16: KArmEnvironment,
 ):
     # WHEN
-    old_arm_means = primary_env_seed_16.arm_means
+    old_arm_means = primary_env_seed_16.arms
     primary_env_seed_16.reset()
-    new_arm_means = primary_env_seed_16.arm_means
+    new_arm_means = primary_env_seed_16.arms
 
     # THEN
     assert primary_env_seed_16._seed == 16
@@ -90,8 +85,8 @@ def test_reset_new_does_change_internal_seeding(
 ):
     # WHEN
     primary_env_seed_16.reset(seed=17)
-    reset_seed_16_arm_means = primary_env_seed_16.arm_means
-    seed_17_arm_means = primary_env_seed_17.arm_means
+    reset_seed_16_arm_means = primary_env_seed_16.arms
+    seed_17_arm_means = primary_env_seed_17.arms
 
     # THEN
     assert np.array_equal(reset_seed_16_arm_means, seed_17_arm_means)

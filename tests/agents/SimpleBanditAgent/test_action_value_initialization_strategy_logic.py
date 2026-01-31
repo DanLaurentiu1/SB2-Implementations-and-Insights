@@ -83,7 +83,7 @@ def test_optimistic_initialization_construction_values(
 
     assert (
         optimistic_action_value_initialization_strategy._optimal_arm_mean_value
-        == test_env.arm_means[test_env.optimal_arm]
+        == test_env.arms[test_env.optimal_arm]
     )
 
     assert (
@@ -98,7 +98,7 @@ def test_optimistic_initialization_has_expected_values(
 ):
     # WHEN
     variance = test_env.reward_strategy.variance
-    optimal_arm_mean = test_env.arm_means[test_env.optimal_arm]
+    optimal_arm_mean = test_env.arms[test_env.optimal_arm]
     expected_q_values = np.full(
         shape=test_env.number_of_arms, fill_value=optimal_arm_mean + 4 * variance
     )
