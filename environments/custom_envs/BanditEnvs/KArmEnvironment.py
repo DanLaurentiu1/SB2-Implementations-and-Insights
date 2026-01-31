@@ -32,20 +32,28 @@ class KArmEnvironment(Env, BaseBanditEnv):
     _drift_stategy: DriftStrategy
     _reward_strategy: RewardStrategy
     _optimal_arm: int
-    _arm_means: npt.NDArray[np.float64]
+    _arms: npt.NDArray[np.float64]
+    _arms_mean: float
+    _arms_variance: float
 
     def __init__(
         self,
         number_of_arms: int = 10,
         seed: int = 16,
         max_steps: int = 1000,
+        arms_mean: float = 0.0,
+        arms_variance: float = 1.0,
         drift_factory: Callable[..., DriftStrategy] = partial(NoDrift),
         reward_factory: Callable[..., RewardStrategy] = partial(
             GaussianReward, variance=np.float64(1)
         ),
     ):
         self._validate_input(
-            number_of_arms=number_of_arms, seed=seed, max_steps=max_steps
+            number_of_arms=number_of_arms,
+            seed=seed,
+            max_steps=max_steps,
+            arms_mean=arms_mean,
+            arms_variance=arms_variance,
         )
 
         self._terminated: bool = False
@@ -54,6 +62,8 @@ class KArmEnvironment(Env, BaseBanditEnv):
         self._seed: int = seed
         self._pulls: int = 0
         self._max_steps: int = max_steps
+        self._arms_mean: float = arms_mean
+        self._arms_variance: float = arms_variance
         self._np_random, _ = np_random(self._seed)
         self._observation_space = Discrete(1, seed=self._seed)
         self._action_space = Discrete(n=self._number_of_arms, seed=self._seed, start=0)
@@ -72,8 +82,8 @@ class KArmEnvironment(Env, BaseBanditEnv):
         return self._number_of_arms
 
     @property
-    def arm_means(self) -> np.ndarray:
-        return self._arm_means
+    def arms(self) -> np.ndarray:
+        return self._arms
 
     @property
     def max_steps(self) -> int:
@@ -126,7 +136,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
         self._validate_action(action=action)
 
         reward = self._reward_strategy.get_reward(
-            arm_mean=self._arm_means[action], rng=self._np_random
+            arm_mean=self._arms[action], rng=self._np_random
         )
 
         self._pulls += 1
@@ -134,10 +144,10 @@ class KArmEnvironment(Env, BaseBanditEnv):
             self._terminated = True
         is_optimal = action == self._optimal_arm
 
-        self._arm_means = self._drift_stategy.drift(
-            arm_means=self._arm_means, rng=self._np_random
+        self._arms = self._drift_stategy.drift(
+            arm_means=self._arms, rng=self._np_random
         )
-        self._optimal_arm = int(np.argmax(self._arm_means))
+        self._optimal_arm = int(np.argmax(self._arms))
 
         return (
             self._get_obs(),
@@ -152,10 +162,12 @@ class KArmEnvironment(Env, BaseBanditEnv):
     # =================
 
     def _get_new_arms(self):
-        self._arm_means = self._np_random.normal(
-            loc=np.float64(0.0), scale=np.float64(1.0), size=self._number_of_arms
+        self._arms = self._np_random.normal(
+            loc=np.float64(self._arms_mean),
+            scale=np.float64(self._arms_variance),
+            size=self._number_of_arms,
         )
-        self._optimal_arm = int(np.argmax(self._arm_means))
+        self._optimal_arm = int(np.argmax(self._arms))
 
     def _get_obs(self):
         return np.float64(1)
@@ -169,7 +181,14 @@ class KArmEnvironment(Env, BaseBanditEnv):
                 "step() called after rollout termination. call reset() first."
             )
 
-    def _validate_input(self, number_of_arms: int, seed: int, max_steps: int):
+    def _validate_input(
+        self,
+        number_of_arms: int,
+        seed: int,
+        max_steps: int,
+        arms_mean: float,
+        arms_variance: float,
+    ):
         if number_of_arms < 1:
             raise EnvironmentLogicException(
                 f"Invalid number of arms={number_of_arms}. This number must be positive and bigger than 0."
@@ -181,6 +200,10 @@ class KArmEnvironment(Env, BaseBanditEnv):
         if seed < 0:
             raise EnvironmentLogicException(
                 f"Invalid seed={seed}. This number must be positive."
+            )
+        if arms_variance < 0:
+            raise EnvironmentLogicException(
+                f"Invalid arms_variance={arms_variance}. This number must be positive."
             )
 
     def _validate_action(self, action: int):
