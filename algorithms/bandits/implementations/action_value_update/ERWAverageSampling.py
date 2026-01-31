@@ -3,7 +3,7 @@ import numpy.typing as npt
 from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
     ActionValueUpdateStrategy,
 )
-from utils.exceptions.logic_exceptions import ActionValueLogicException
+from utils.exceptions.logic_exceptions import ActionUpdateLogicException
 
 
 class ERWAverageSampling(ActionValueUpdateStrategy):
@@ -34,7 +34,7 @@ class ERWAverageSampling(ActionValueUpdateStrategy):
 
     def _validate_input(self, alpha: float):
         if not (0 < alpha <= 1):
-            raise ActionValueLogicException(
+            raise ActionUpdateLogicException(
                 f"Invalid alpha={alpha}. Alpha must be between 1 and 0."
             )
 

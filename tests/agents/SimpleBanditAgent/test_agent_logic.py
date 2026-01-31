@@ -20,7 +20,9 @@ from algorithms.bandits.implementations.BanditAgent import BanditAgent
 from algorithms.bandits.implementations.action_value_update.ERWAverageSampling import (
     ERWAverageSampling,
 )
-from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import (
+    EpsilonGreedy,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )

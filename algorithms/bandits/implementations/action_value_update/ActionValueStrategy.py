@@ -15,7 +15,7 @@ class ActionValueUpdateStrategy(ABC):
 
     @abstractmethod
     def update_action_value(
-        self, q_values: npt.NDArray[np.float64], action: int, reward: float
+        self, q_values: npt.NDArray[np.float64], action: int, reward: np.float64
     ) -> None:
         pass
 

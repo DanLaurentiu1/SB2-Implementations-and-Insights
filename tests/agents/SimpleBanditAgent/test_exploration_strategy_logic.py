@@ -10,7 +10,9 @@ from pathlib import Path
 from gymnasium.spaces import Discrete
 from gymnasium.utils.seeding import np_random
 
-from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import (
+    EpsilonGreedy,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )

@@ -21,7 +21,9 @@ from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )
-from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import (
+    EpsilonGreedy,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
 )

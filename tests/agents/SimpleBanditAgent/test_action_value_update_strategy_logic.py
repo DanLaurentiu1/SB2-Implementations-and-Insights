@@ -10,7 +10,7 @@ from algorithms.bandits.implementations.action_value_update.ERWAverageSampling i
     ERWAverageSampling,
 )
 from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
-from utils.exceptions.logic_exceptions import ActionValueLogicException
+from utils.exceptions.logic_exceptions import ActionUpdateLogicException
 
 
 @contextmanager
@@ -45,7 +45,7 @@ def erw_average_sampling(stationary_env: KArmEnvironment) -> ERWAverageSampling:
 
 def test_alpha_negative_throws_exception():
     # WHEN
-    with pytest.raises(ActionValueLogicException) as exception_output:
+    with pytest.raises(ActionUpdateLogicException) as exception_output:
         ERWAverageSampling(alpha=np.float64(-2))
 
     # THEN
