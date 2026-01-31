@@ -25,6 +25,8 @@ def make_env(cfg: DictConfig, seed: int) -> BaseBanditEnv:
     env = EnvClass(
         number_of_arms=env_params["number_of_arms"],
         max_steps=env_params["max_steps"],
+        arms_mean=env_params["arms_mean"],
+        arms_variance=env_params["arms_variance"],
         seed=seed,
         drift_factory=drift_factory,
         reward_factory=reward_factory,
