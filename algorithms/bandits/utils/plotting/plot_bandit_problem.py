@@ -19,7 +19,7 @@ CONFIGS_DIR = Path(__file__).parents[2] / "configs"
 def plot_bandit_problem(cfg: DictConfig):
     env_seed = int(cfg["run"]["env_seed"])
     env = make_env(cfg["environment"], seed=env_seed)
-    arm_means = env.arm_means
+    arm_means = env.arms
     std = 1.0
     y = np.linspace(-4, 4, 400)
     plt.figure(figsize=(12, 6))

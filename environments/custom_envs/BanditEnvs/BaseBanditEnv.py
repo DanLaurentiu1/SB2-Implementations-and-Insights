@@ -16,7 +16,7 @@ class BaseBanditEnv(ABC):
 
     @property
     @abstractmethod
-    def arm_means(self) -> npt.NDArray[np.float64]:
+    def arms(self) -> npt.NDArray[np.float64]:
         pass
 
     @property

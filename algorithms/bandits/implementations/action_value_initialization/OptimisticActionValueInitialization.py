@@ -39,7 +39,7 @@ class OptimisticActionValueInitialization(ActionValueInitializationStrategy):
 
     def _setup(self, env: BaseBanditEnv) -> None:
         self._number_of_arms = env.number_of_arms
-        self._optimal_arm_mean_value = env.arm_means[env.optimal_arm]
+        self._optimal_arm_mean_value = env.arms[env.optimal_arm]
         self._env_reward_variance = env.reward_strategy.variance
 
     def __repr__(self) -> str:

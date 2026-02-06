@@ -10,7 +10,9 @@ from pathlib import Path
 from gymnasium.spaces import Discrete
 from gymnasium.utils.seeding import np_random
 
-from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import (
+    EpsilonGreedy,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )
@@ -176,7 +178,8 @@ def test_pick_action_greedy(
     greedy_strategy: EpsilonGreedy, context_greedy: ExplorationExploitationContext
 ):
     # WHEN
-    action_greedy = greedy_strategy.pick_action(context_greedy)
+    action_update_context = greedy_strategy.pick_action(context_greedy)
+    action_greedy = action_update_context.action
 
     # THEN
     assert type(action_greedy) is int
@@ -184,7 +187,8 @@ def test_pick_action_greedy(
 
     # WHEN
     context_greedy.q_values = np.array([-2.0, 1.0, 0.0])
-    action_greedy = greedy_strategy.pick_action(context_greedy)
+    action_update_context = greedy_strategy.pick_action(context_greedy)
+    action_greedy = action_update_context.action
 
     # THEN
     assert action_greedy == 1

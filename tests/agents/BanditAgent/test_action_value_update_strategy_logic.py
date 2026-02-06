@@ -3,6 +3,9 @@ from contextlib import contextmanager
 import numpy as np
 import pytest
 
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.action_value_update.AverageSampling import (
     AverageSampling,
 )
@@ -10,7 +13,7 @@ from algorithms.bandits.implementations.action_value_update.ERWAverageSampling i
     ERWAverageSampling,
 )
 from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
-from utils.exceptions.logic_exceptions import ActionValueLogicException
+from utils.exceptions.logic_exceptions import ActionUpdateLogicException
 
 
 @contextmanager
@@ -43,9 +46,15 @@ def erw_average_sampling(stationary_env: KArmEnvironment) -> ERWAverageSampling:
     return action_value_strategy
 
 
+# GIVEN
+@pytest.fixture
+def action_update_context() -> ActionUpdateContext:
+    return ActionUpdateContext(action=0)
+
+
 def test_alpha_negative_throws_exception():
     # WHEN
-    with pytest.raises(ActionValueLogicException) as exception_output:
+    with pytest.raises(ActionUpdateLogicException) as exception_output:
         ERWAverageSampling(alpha=np.float64(-2))
 
     # THEN
@@ -54,10 +63,16 @@ def test_alpha_negative_throws_exception():
     )
 
 
-def test_average_sampling_update_action_values(average_sampling: AverageSampling):
+def test_average_sampling_update_action_values(
+    average_sampling: AverageSampling, action_update_context: ActionUpdateContext
+):
     # WHEN
     q_values = np.array([0.0, 0.0, 0.0])
-    average_sampling.update_action_value(q_values, action=0, reward=np.float64(0.5))
+    average_sampling.update_action_value(
+        q_values=q_values,
+        reward=np.float64(0.5),
+        action_update_context=action_update_context,
+    )
 
     # THEN
     assert average_sampling._action_counts[0] == 1
@@ -65,7 +80,9 @@ def test_average_sampling_update_action_values(average_sampling: AverageSampling
 
     # WHEN
     average_sampling.update_action_value(
-        q_values=q_values, action=0, reward=np.float64(2.5)
+        q_values=q_values,
+        reward=np.float64(2.5),
+        action_update_context=action_update_context,
     )
 
     # THEN
@@ -83,18 +100,24 @@ def test_average_sampling_repr(average_sampling: AverageSampling):
 
 
 def test_erw_average_sampling_update_action_values(
-    erw_average_sampling: ERWAverageSampling,
+    erw_average_sampling: ERWAverageSampling, action_update_context: ActionUpdateContext
 ):
     # WHEN
     q_values = np.array([0.0, 0.0, 0.0])
-    erw_average_sampling.update_action_value(q_values, action=0, reward=np.float64(0.5))
+    erw_average_sampling.update_action_value(
+        q_values=q_values,
+        reward=np.float64(0.5),
+        action_update_context=action_update_context,
+    )
 
     # THEN
     assert q_values[0] == pytest.approx(0.5)
 
     # WHEN
     erw_average_sampling.update_action_value(
-        q_values=q_values, action=0, reward=np.float64(2.5)
+        q_values=q_values,
+        reward=np.float64(2.5),
+        action_update_context=action_update_context,
     )
 
     # THEN

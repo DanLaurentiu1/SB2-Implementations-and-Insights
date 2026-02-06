@@ -28,6 +28,6 @@ class ExplorationLogicException(LogicException):
         super().__init__(f"[ExplorationLogicException] {message}")
 
 
-class ActionValueLogicException(LogicException):
+class ActionUpdateLogicException(LogicException):
     def __init__(self, message: str):
-        super().__init__(f"[ActionValueLogicException] {message}")
+        super().__init__(f"[ActionUpdateLogicException] {message}")
