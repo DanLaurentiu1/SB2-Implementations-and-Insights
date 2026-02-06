@@ -20,6 +20,14 @@ class AverageSampling(ActionValueUpdateStrategy):
         super().__init__(**kwargs)
 
     # =================
+    # Properties
+    # =================
+
+    @property
+    def action_counts(self) -> npt.NDArray[np.float64]:
+        return self._action_counts
+
+    # =================
     # Public API
     # =================
 
