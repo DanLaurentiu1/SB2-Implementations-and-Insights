@@ -43,15 +43,14 @@ class PreferenceGradientSampling(ActionValueUpdateStrategy):
         # TODO -> change this to assert maybe?
         if action_update_context.probabilities is not None:
             probabilities = action_update_context.probabilities
+            error_signal: np.float64 = self._alpha * (reward - self._baseline)
 
-        error_signal: np.float64 = self._alpha * (reward - self._baseline)
+            # ruling out everyone here, we will update the 'chosen action' later
+            q_values -= error_signal * probabilities
+            q_values[action] += error_signal
 
-        # ruling out everyone here, we will update the 'chosen action' later
-        q_values -= error_signal * probabilities
-        q_values[action] += error_signal
-
-        if self._is_baseline:
-            self._update_baseline(latest_reward=reward)
+            if self._is_baseline:
+                self._update_baseline(latest_reward=reward)
 
     # ==============
     # Internals
