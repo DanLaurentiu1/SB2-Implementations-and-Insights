@@ -176,6 +176,17 @@ def test_validate_input_max_steps_invalid():
     )
 
 
+def test_validate_input_arms_variance_invalid():
+    # WHEN
+    with pytest.raises(EnvironmentLogicException) as exception_output:
+        KArmEnvironment(number_of_arms=2, seed=16, max_steps=10, arms_variance=-1)
+
+    # THEN
+    assert "Invalid arms_variance=-1. This number must be positive." in str(
+        exception_output.value
+    )
+
+
 def test_validate_action_invalid(stationary_env: KArmEnvironment):
     # WHEN
     with pytest.raises(EnvironmentLogicException) as exception_output:
