@@ -1,5 +1,8 @@
 import numpy as np
 import numpy.typing as npt
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
     ActionValueUpdateStrategy,
 )
@@ -24,8 +27,13 @@ class ERWAverageSampling(ActionValueUpdateStrategy):
     # =================
 
     def update_action_value(
-        self, q_values: npt.NDArray[np.float64], action: int, reward: np.float64
+        self,
+        q_values: npt.NDArray[np.float64],
+        reward: np.float64,
+        action_update_context: ActionUpdateContext,
     ) -> None:
+        action = action_update_context.action
+
         q_values[action] += self._alpha * (reward - q_values[action])
 
     # =================

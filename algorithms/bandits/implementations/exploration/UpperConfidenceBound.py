@@ -1,6 +1,9 @@
 import numpy as np
 import numpy.typing as npt
 
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )
@@ -35,7 +38,9 @@ class UpperConfidenceBound(ExplorationExploitationStrategy):
     # Public API
     # =================
 
-    def pick_action(self, exploration_context: ExplorationExploitationContext) -> int:
+    def pick_action(
+        self, exploration_context: ExplorationExploitationContext
+    ) -> ActionUpdateContext:
         time_step: int = exploration_context.time_step
         q_values: npt.NDArray[np.float64] = exploration_context.q_values
 
@@ -52,7 +57,7 @@ class UpperConfidenceBound(ExplorationExploitationStrategy):
             action_picked: int = int(np.argmax(scores))
 
         self._action_counts[action_picked] += 1
-        return action_picked
+        return ActionUpdateContext(action=action_picked)
 
     # =================
     # Internals

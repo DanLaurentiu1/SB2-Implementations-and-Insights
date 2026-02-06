@@ -1,5 +1,8 @@
 import numpy as np
 import numpy.typing as npt
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
     ActionValueUpdateStrategy,
 )
@@ -31,14 +34,24 @@ class PreferenceGradientSampling(ActionValueUpdateStrategy):
     # ==============
 
     def update_action_value(
-        self, q_values: npt.NDArray[np.float64], action: int, reward: np.float64
+        self,
+        q_values: npt.NDArray[np.float64],
+        reward: np.float64,
+        action_update_context: ActionUpdateContext,
     ) -> None:
+        action = action_update_context.action
+        # TODO -> change this to assert maybe?
+        if action_update_context.probabilities is not None:
+            probabilities = action_update_context.probabilities
+
+        error_signal: np.float64 = self._alpha * (reward - self._baseline)
+
+        # ruling out everyone here, we will update the 'chosen action' later
+        q_values -= error_signal * probabilities
+        q_values[action] += error_signal
+
         if self._is_baseline:
-            # q_values[action] =
-            # everything else is going to decrease
             self._update_baseline(latest_reward=reward)
-        else:
-            pass
 
     # ==============
     # Internals
@@ -49,8 +62,7 @@ class PreferenceGradientSampling(ActionValueUpdateStrategy):
         self._baseline = self._baseline + (latest_reward - self._baseline) / self._count
 
     def _init_baseline(self):
-        if self._is_baseline:
-            self._baseline = np.float64(0)
+        self._baseline = np.float64(0)
 
     def _validate_input(self, alpha: float) -> None:
         if not (alpha > 0):

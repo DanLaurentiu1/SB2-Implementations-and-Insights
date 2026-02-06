@@ -11,6 +11,9 @@ from algorithms.bandits.implementations.action_value_initialization.ActionValueI
 from algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization import (
     NormalActionValueInitialization,
 )
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
     ActionValueUpdateStrategy,
 )
@@ -123,15 +126,18 @@ class BanditAgent(BaseBanditAgent):
 
         while not terminated and not truncated:
             self._exploration_context.update(time_step=total_steps)
-            action: int = self._exploration_strategy.pick_action(
-                exploration_context=self._exploration_context
+            action_update_context: ActionUpdateContext = (
+                self._exploration_strategy.pick_action(
+                    exploration_context=self._exploration_context
+                )
             )
 
+            action = action_update_context.action
             _, reward, terminated, truncated, info = self._env.step(action=action)
             self._action_value_update_strategy.update_action_value(
                 q_values=self._q_values,
-                action=action,
                 reward=reward,
+                action_update_context=action_update_context,
             )
 
             total_reward += reward

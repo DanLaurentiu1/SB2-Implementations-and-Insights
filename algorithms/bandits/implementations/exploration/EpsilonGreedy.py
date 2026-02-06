@@ -1,5 +1,8 @@
 import numpy as np
 
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )
@@ -33,7 +36,9 @@ class EpsilonGreedy(ExplorationExploitationStrategy):
     # Public API
     # =================
 
-    def pick_action(self, exploration_context: ExplorationExploitationContext) -> int:
+    def pick_action(
+        self, exploration_context: ExplorationExploitationContext
+    ) -> ActionUpdateContext:
         rng = exploration_context.rng
         action_space = exploration_context.action_space
         q_values = exploration_context.q_values
@@ -42,7 +47,8 @@ class EpsilonGreedy(ExplorationExploitationStrategy):
             action = action_space.sample()
         else:
             action = np.argmax(q_values)
-        return int(action)
+
+        return ActionUpdateContext(action=int(action))
 
     # =================
     # Internals
