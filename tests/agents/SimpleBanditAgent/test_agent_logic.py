@@ -13,6 +13,9 @@ from algorithms.bandits.implementations.action_value_initialization.NormalAction
 from algorithms.bandits.implementations.action_value_initialization.OptimisticActionValueInitialization import (
     OptimisticActionValueInitialization,
 )
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.action_value_update.AverageSampling import (
     AverageSampling,
 )
@@ -327,11 +330,16 @@ def test_full_run_advanced(
 
     while not terminated and not truncated:
         context.update(time_step=total_steps)
-        action: int = exploration_strategy.pick_action(exploration_context=context)
+        action_update_context: ActionUpdateContext = exploration_strategy.pick_action(
+            exploration_context=context
+        )
 
+        action = action_update_context.action
         _, reward, terminated, truncated, info = agent.env.step(action=action)
         action_value_strategy.update_action_value(
-            q_values=agent.q_values, action=action, reward=reward
+            q_values=agent.q_values,
+            reward=reward,
+            action_update_context=action_update_context,
         )
 
         total_reward += reward
