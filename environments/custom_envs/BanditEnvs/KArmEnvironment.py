@@ -29,7 +29,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
     _np_random: np.random.Generator
     _observation_space: Discrete
     _action_space: Discrete
-    _drift_stategy: DriftStrategy
+    _drift_strategy: DriftStrategy
     _reward_strategy: RewardStrategy
     _optimal_arm: int
     _arms: npt.NDArray[np.float64]
@@ -68,7 +68,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
         self._observation_space = Discrete(1, seed=self._seed)
         self._action_space = Discrete(n=self._number_of_arms, seed=self._seed, start=0)
 
-        self._drift_stategy = drift_factory()
+        self._drift_strategy = drift_factory()
         self._reward_strategy = reward_factory()
 
         self._get_new_arms()
@@ -111,7 +111,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
 
     @property
     def drift_strategy(self) -> DriftStrategy:
-        return self._drift_stategy
+        return self._drift_strategy
 
     # =================
     # Public API
@@ -144,7 +144,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
             self._terminated = True
         is_optimal = action == self._optimal_arm
 
-        self._arms = self._drift_stategy.drift(
+        self._arms = self._drift_strategy.drift(
             arm_means=self._arms, rng=self._np_random
         )
         self._optimal_arm = int(np.argmax(self._arms))
@@ -214,7 +214,7 @@ class KArmEnvironment(Env, BaseBanditEnv):
 
     # removed reward strategy representation because of windows file length limit (!)
     def __str__(self):
-        return f"KArm(s={self._seed},dft={self._drift_stategy.__class__.__name__})"
+        return f"KArm(s={self._seed},dft={self.drift_strategy.__class__.__name__})"
 
     def __repr__(self):
-        return f"KArm(\n\tdft={self._drift_stategy.__repr__()},\n\tr={self._reward_strategy.__repr__()},\n\ts={self._seed},\n\tarms={self._number_of_arms}\n)"
+        return f"KArm(\n\tdft={self.drift_strategy.__repr__()},\n\tr={self.reward_strategy.__repr__()},\n\ts={self._seed},\n\tarms={self._number_of_arms}\n)"
