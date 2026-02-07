@@ -1,5 +1,4 @@
 import json
-from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 from typing import cast
@@ -30,13 +29,9 @@ from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
 from utils.exceptions.logic_exceptions import AgentLogicException
 from utils.logging.FakeLogger import FakeLogger
 
-
-@contextmanager
-def not_raises():
-    try:
-        yield
-    except Exception as e:
-        raise AssertionError(f"Raised unexpected exception: {e}")
+# ==============
+# Fixtures
+# ==============
 
 
 # GIVEN
@@ -106,13 +101,20 @@ def optimistic_agent(stationary_env: KArmEnvironment) -> BanditAgent:
 # GIVEN
 @pytest.fixture
 def full_run_values_json_path() -> Path:
-    return Path(__file__).parent / "agent_16_behaviour_values.json"
+    return Path(__file__).parent / "data" / "agent_16_behaviour_values.json"
 
 
 # GIVEN
 @pytest.fixture
 def full_run_values_json_path_logging_skip() -> Path:
-    return Path(__file__).parent / "agent_16_behaviour_values_logging_skip.json"
+    return (
+        Path(__file__).parent / "data" / "agent_16_behaviour_values_logging_skip.json"
+    )
+
+
+# ==============
+# Tests
+# ==============
 
 
 def test_agent_invalid_seed_throws_exception(stationary_env: KArmEnvironment):
@@ -348,7 +350,3 @@ def test_full_run_advanced(
     assert np.allclose(
         action_value_strategy.action_counts, np.array(expected_rows[-1]["action_freq"])
     )
-
-
-def test_optimistic_agent_initialization_full_run():
-    pass
