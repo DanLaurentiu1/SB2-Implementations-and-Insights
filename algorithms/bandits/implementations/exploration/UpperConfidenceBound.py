@@ -47,7 +47,7 @@ class UpperConfidenceBound(ExplorationExploitationStrategy):
         zero_indices = np.where(self._action_counts == 0)[0]
 
         if len(zero_indices) > 0:
-            action_picked: int = zero_indices[0]
+            action_picked: int = int(zero_indices[0])
         else:
             bonuses: npt.NDArray[np.float64] = self._uncertainty_coefficient * np.sqrt(
                 np.log(time_step + 1) / self._action_counts
@@ -73,4 +73,4 @@ class UpperConfidenceBound(ExplorationExploitationStrategy):
             )
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(c={self._uncertainty_coefficient})"
+        return f"{self.__class__.__name__}(c={self.uncertainty_coefficient})"
