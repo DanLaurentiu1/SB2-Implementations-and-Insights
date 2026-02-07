@@ -8,7 +8,6 @@ from algorithms.bandits.implementations.exploration.ExplorationExploitationStrat
     ExplorationExploitationStrategy,
 )
 import numpy as np
-import numpy.typing as npt
 
 
 class SoftmaxSampling(ExplorationExploitationStrategy):
@@ -25,9 +24,9 @@ class SoftmaxSampling(ExplorationExploitationStrategy):
         preferences = exploration_context.q_values
         rng = exploration_context.rng
 
-        exponential: npt.NDArray[np.float64] = np.exp(preferences)
-        exponential_sum = np.sum(exponential)
-        pi = exponential / exponential_sum
+        shifted_preferences = preferences - np.max(preferences)
+        exponential = np.exp(shifted_preferences)
+        pi = exponential / np.sum(exponential)
 
         action = rng.choice(a=len(pi), p=pi)
         return ActionUpdateContext(action=int(action), probabilities=pi)
