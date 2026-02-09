@@ -1,0 +1,18 @@
+_target_: algorithms.bandits.implementations.BanditAgent.BanditAgent
+params:
+  action_value_update_strategy:
+    _target_: algorithms.bandits.implementations.action_value_update.PreferenceGradientSampling.PreferenceGradientSampling
+    alpha: 0.1
+    baseline: True
+  exploration_strategy:
+    _target_: algorithms.bandits.implementations.exploration.SoftmaxSampling.SoftmaxSampling
+  action_value_initialization_strategy:
+    _target_: algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization.NormalActionValueInitialization
+  metrics:
+  - step
+  - action
+  - reward
+  - total_reward
+  - average_reward
+  - optimal_chosen_counter
+  - optimal_chosen_percentage

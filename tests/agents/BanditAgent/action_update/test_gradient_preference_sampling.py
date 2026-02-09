@@ -101,8 +101,17 @@ def test_preference_gradient_negative_alpha_throws_exception(
 def test_preference_gradient_string_representation(
     preference_sampling_with_baseline: PreferenceGradientSampling,
 ):
-    expected_string = "PreferenceGradientSampling(alpha=1.0,baseline=0.0)"
+    expected_string = "PGS(a=1.0,b=True)"
     actual_string = preference_sampling_with_baseline.__repr__()
+
+    assert expected_string == actual_string
+
+
+def test_preference_gradient_string_representation_no_baseline(
+    preference_sampling_without_baseline: PreferenceGradientSampling,
+):
+    expected_string = "PGS(a=1.0,b=False)"
+    actual_string = preference_sampling_without_baseline.__repr__()
 
     assert expected_string == actual_string
 

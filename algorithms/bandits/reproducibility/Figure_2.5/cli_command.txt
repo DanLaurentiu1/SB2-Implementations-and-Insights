@@ -1,0 +1,1 @@
+python -m algorithms.bandits.run_reproducibility -m run.env_seed=range(16,2016) algorithm=GradientBanditWithBaseline,GradientBanditWithoutBaseline algorithm.params.action_value_update_strategy.alpha=0.1,0.4 environment=10ArmTestBed_Modified run.name=Figure_2.5 +repro_folder_name=Figure_2.5
