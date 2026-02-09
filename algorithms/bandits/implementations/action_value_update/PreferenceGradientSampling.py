@@ -40,10 +40,12 @@ class PreferenceGradientSampling(ActionValueUpdateStrategy):
         action_update_context: ActionUpdateContext,
     ) -> None:
         action = action_update_context.action
-        # TODO -> change this to assert maybe?
-        if action_update_context.probabilities is not None:
-            probabilities = action_update_context.probabilities
+        if action_update_context.probabilities is None:
+            raise ActionUpdateLogicException(
+                "PreferenceGradientSampling requires probabilities in the ActionUpdateContext."
+            )
 
+        probabilities = action_update_context.probabilities
         error_signal: np.float64 = self._alpha * (reward - self._baseline)
 
         # ruling out everyone here, we will update the 'chosen action' later
