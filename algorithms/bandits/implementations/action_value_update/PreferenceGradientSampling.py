@@ -73,6 +73,4 @@ class PreferenceGradientSampling(ActionValueUpdateStrategy):
             )
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(alpha={self._alpha},baseline={self._baseline})"
-        )
+        return f"PGS(a={self._alpha},b={self._is_baseline})"
