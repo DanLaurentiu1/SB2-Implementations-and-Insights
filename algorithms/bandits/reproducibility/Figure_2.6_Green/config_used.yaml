@@ -1,0 +1,37 @@
+algorithm:
+  _target_: algorithms.bandits.implementations.BanditAgent.BanditAgent
+  params:
+    action_value_update_strategy:
+      _target_: algorithms.bandits.implementations.action_value_update.PreferenceGradientSampling.PreferenceGradientSampling
+      alpha: 4
+      baseline: true
+    exploration_strategy:
+      _target_: algorithms.bandits.implementations.exploration.SoftmaxSampling.SoftmaxSampling
+    action_value_initialization_strategy:
+      _target_: algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization.NormalActionValueInitialization
+    metrics:
+    - step
+    - action
+    - reward
+    - total_reward
+    - average_reward
+    - optimal_chosen_counter
+    - optimal_chosen_percentage
+environment:
+  _target_: environments.custom_envs.BanditEnvs.KArmEnvironment.KArmEnvironment
+  params:
+    number_of_arms: 10
+    max_steps: 1000
+    arms_mean: 0.0
+    arms_variance: 1.0
+    drift_strategy:
+      _target_: environments.custom_envs.BanditEnvs.drift.NoDrift.NoDrift
+    reward_strategy:
+      _target_: environments.custom_envs.BanditEnvs.reward.GaussianReward.GaussianReward
+      variance: 1.0
+run:
+  name: Figure_2.6_Green
+  episodes: 1
+  agent_seed: 16
+  env_seed: 1015
+repro_folder_name: Figure_2.6_Green
