@@ -245,9 +245,7 @@ def test_agent_repr(agent: BanditAgent):
 
 def test_agent_str(agent: BanditAgent):
     # WHEN
-    expected_string = (
-        "BanditAgent(s=16,expl=EpsilonGreedy,a_v=AverageSampling,init=NormalAVInit)"
-    )
+    expected_string = "BanditAgent(s=16,expl=EpsilonGreedy(eps=0.1),a_v=AverageSampling,init=NormalAVInit)"
     actual_string = agent.__str__()
 
     # THEN
