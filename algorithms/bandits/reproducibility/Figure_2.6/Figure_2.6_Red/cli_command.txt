@@ -1,0 +1,1 @@
+python -m algorithms.bandits.run_reproducibility -m run.env_seed=range(16,1016) algorithm.params.exploration_strategy.epsilon=0.0078125,0.015625,0.03125,0.0625,0.125,0.25 run.name=Figure_2.6_Red +repro_folder_name=Figure_2.6_Red
