@@ -11,11 +11,20 @@ omit =
 
     environments/custom_envs/BanditEnvs/BaseBanditEnv.py
 
+    algorithms/make_agent.py
+
     algorithms/bandits/implementations/BaseBanditAgent.py
     
     algorithms/bandits/implementations/exploration/ExplorationExploitationStrategy.py
     algorithms/bandits/implementations/action_value_update/ActionValueStrategy.py
     algorithms/bandits/implementations/action_value_initialization/ActionValueInitializationStrategy.py
+    
+    algorithms/bandits/run.py
+    algorithms/bandits/run_reproducibility.py
+
+    algorithms/bandits/utils/*
+
+
     
 branch = True
 

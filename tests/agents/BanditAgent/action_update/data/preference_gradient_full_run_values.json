@@ -1,0 +1,242 @@
+[
+    {
+        "input": {
+            "q-values": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "reward": 2.0,
+            "action": 0,
+            "probabilities": [
+                0.333,
+                0.333,
+                0.333
+            ]
+        },
+        "output": {
+            "q-values": [
+                1.334,
+                -0.666,
+                -0.666
+            ],
+            "baseline": 2.0
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                1.334,
+                -0.666,
+                -0.666
+            ],
+            "reward": 1.0,
+            "action": 1,
+            "probabilities": [
+                0.787,
+                0.106,
+                0.106
+            ]
+        },
+        "output": {
+            "q-values": [
+                2.121,
+                -1.56,
+                -0.56
+            ],
+            "baseline": 1.5
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                2.121,
+                -1.56,
+                -0.56
+            ],
+            "reward": 3.0,
+            "action": 0,
+            "probabilities": [
+                0.914,
+                0.023,
+                0.062
+            ]
+        },
+        "output": {
+            "q-values": [
+                2.25,
+                -1.5945,
+                -0.653
+            ],
+            "baseline": 2.0
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                2.25,
+                -1.5945,
+                -0.653
+            ],
+            "reward": 2.0,
+            "action": 2,
+            "probabilities": [
+                0.929,
+                0.019,
+                0.050
+            ]
+        },
+        "output": {
+            "q-values": [
+                2.25,
+                -1.5945,
+                -0.653
+            ],
+            "baseline": 2.0
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                2.25,
+                -1.5945,
+                -0.653
+            ],
+            "reward": 4.0,
+            "action": 0,
+            "probabilities": [
+                0.929,
+                0.019,
+                0.050
+            ]
+        },
+        "output": {
+            "q-values": [
+                2.392,
+                -1.6325,
+                -0.753
+            ],
+            "baseline": 2.4
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                2.392,
+                -1.6325,
+                -0.753
+            ],
+            "reward": 1.0,
+            "action": 1,
+            "probabilities": [
+                0.943,
+                0.017,
+                0.040
+            ]
+        },
+        "output": {
+            "q-values": [
+                3.7122,
+                -3.0087,
+                -0.697
+            ],
+            "baseline": 2.167
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                3.7122,
+                -3.0087,
+                -0.697
+            ],
+            "reward": 0.0,
+            "action": 2,
+            "probabilities": [
+                0.987,
+                0.001,
+                0.012
+            ]
+        },
+        "output": {
+            "q-values": [
+                5.850,
+                -3.0065,
+                -2.837
+            ],
+            "baseline": 1.857
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                5.851,
+                -3.0065,
+                -2.838
+            ],
+            "reward": 2.5,
+            "action": 0,
+            "probabilities": [
+                0.9997,
+                0.0001,
+                0.0002
+            ]
+        },
+        "output": {
+            "q-values": [
+                5.8512,
+                -3.0066,
+                -2.8381
+            ],
+            "baseline": 1.938
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                5.8512,
+                -3.0066,
+                -2.8381
+            ],
+            "reward": 5.0,
+            "action": 2,
+            "probabilities": [
+                0.9997,
+                0.0001,
+                0.0002
+            ]
+        },
+        "output": {
+            "q-values": [
+                2.7901,
+                -3.0069,
+                0.2233
+            ],
+            "baseline": 2.278
+        }
+    },
+    {
+        "input": {
+            "q-values": [
+                2.7901,
+                -3.0069,
+                0.2233
+            ],
+            "reward": 2.0,
+            "action": 1,
+            "probabilities": [
+                0.926,
+                0.003,
+                0.071
+            ]
+        },
+        "output": {
+            "q-values": [
+                3.0475,
+                -3.2841,
+                0.243
+            ],
+            "baseline": 2.25
+        }
+    }
+]

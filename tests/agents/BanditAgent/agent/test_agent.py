@@ -1,5 +1,4 @@
 import json
-from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 from typing import cast
@@ -20,7 +19,9 @@ from algorithms.bandits.implementations.BanditAgent import BanditAgent
 from algorithms.bandits.implementations.action_value_update.ERWAverageSampling import (
     ERWAverageSampling,
 )
-from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import (
+    EpsilonGreedy,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )
@@ -28,13 +29,9 @@ from environments.custom_envs.BanditEnvs.KArmEnvironment import KArmEnvironment
 from utils.exceptions.logic_exceptions import AgentLogicException
 from utils.logging.FakeLogger import FakeLogger
 
-
-@contextmanager
-def not_raises():
-    try:
-        yield
-    except Exception as e:
-        raise AssertionError(f"Raised unexpected exception: {e}")
+# ==============
+# Fixtures
+# ==============
 
 
 # GIVEN
@@ -104,13 +101,20 @@ def optimistic_agent(stationary_env: KArmEnvironment) -> BanditAgent:
 # GIVEN
 @pytest.fixture
 def full_run_values_json_path() -> Path:
-    return Path(__file__).parent / "agent_16_behaviour_values.json"
+    return Path(__file__).parent / "data" / "agent_16_behaviour_values.json"
 
 
 # GIVEN
 @pytest.fixture
 def full_run_values_json_path_logging_skip() -> Path:
-    return Path(__file__).parent / "agent_16_behaviour_values_logging_skip.json"
+    return (
+        Path(__file__).parent / "data" / "agent_16_behaviour_values_logging_skip.json"
+    )
+
+
+# ==============
+# Tests
+# ==============
 
 
 def test_agent_invalid_seed_throws_exception(stationary_env: KArmEnvironment):
@@ -241,9 +245,7 @@ def test_agent_repr(agent: BanditAgent):
 
 def test_agent_str(agent: BanditAgent):
     # WHEN
-    expected_string = (
-        "BanditAgent(s=16,expl=EpsilonGreedy,a_v=AverageSampling,init=NormalAVInit)"
-    )
+    expected_string = "BanditAgent(s=16,expl=EpsilonGreedy(eps=0.1),a_v=AverageSampling,init=NormalAVInit)"
     actual_string = agent.__str__()
 
     # THEN
@@ -314,43 +316,11 @@ def test_full_run_advanced(
     context: ExplorationExploitationContext,
 ):
     action_value_strategy = cast(AverageSampling, agent._action_value_update_strategy)
-    exploration_strategy = cast(EpsilonGreedy, agent._exploration_strategy)
 
     # WHEN
     logger = FakeLogger()
 
-    total_reward = 0.0
-    optimal_chosen_counter = total_steps = 0
-    terminated = truncated = False
-
-    while not terminated and not truncated:
-        context.update(time_step=total_steps)
-        action: int = exploration_strategy.pick_action(exploration_context=context)
-
-        _, reward, terminated, truncated, info = agent.env.step(action=action)
-        action_value_strategy.update_action_value(
-            q_values=agent.q_values, action=action, reward=reward
-        )
-
-        total_reward += reward
-        total_steps += 1
-        optimal_chosen_counter += info["optimal_arm_chosen"]
-
-        row = {
-            "step": total_steps,
-            "action": int(action),
-            "reward": float(reward),
-            "total_reward": float(total_reward),
-            "average_reward": float(total_reward) / total_steps,
-            "optimal_chosen_counter": float(optimal_chosen_counter),
-            "optimal_chosen_percentage": (
-                float(optimal_chosen_counter) / total_steps if total_steps else 0.0
-            ),
-            "q_values": agent.q_values.tolist(),
-            "action_freq": action_value_strategy._action_counts.tolist(),
-        }
-
-        logger.log(row=row)
+    agent.run_episode(logger=logger, log_every=1)
 
     with full_run_values_json_path.open("r") as f:
         expected_rows = json.load(f)
@@ -373,9 +343,8 @@ def test_full_run_advanced(
         assert actual["optimal_chosen_percentage"] == pytest.approx(
             expected["optimal_chosen_percentage"], abs=5e-2
         )
-        assert actual["q_values"] == pytest.approx(expected["q_values"], abs=5e-2)
-        assert actual["action_freq"] == expected["action_freq"]
 
-
-def test_optimistic_agent_initialization_full_run():
-    pass
+    assert agent.q_values == pytest.approx(expected_rows[-1]["q_values"], abs=5e-2)
+    assert np.allclose(
+        action_value_strategy.action_counts, np.array(expected_rows[-1]["action_freq"])
+    )

@@ -1,6 +1,9 @@
 import numpy as np
 import numpy.typing as npt
 
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )
@@ -35,14 +38,16 @@ class UpperConfidenceBound(ExplorationExploitationStrategy):
     # Public API
     # =================
 
-    def pick_action(self, exploration_context: ExplorationExploitationContext) -> int:
+    def pick_action(
+        self, exploration_context: ExplorationExploitationContext
+    ) -> ActionUpdateContext:
         time_step: int = exploration_context.time_step
         q_values: npt.NDArray[np.float64] = exploration_context.q_values
 
         zero_indices = np.where(self._action_counts == 0)[0]
 
         if len(zero_indices) > 0:
-            action_picked: int = zero_indices[0]
+            action_picked: int = int(zero_indices[0])
         else:
             bonuses: npt.NDArray[np.float64] = self._uncertainty_coefficient * np.sqrt(
                 np.log(time_step + 1) / self._action_counts
@@ -52,7 +57,7 @@ class UpperConfidenceBound(ExplorationExploitationStrategy):
             action_picked: int = int(np.argmax(scores))
 
         self._action_counts[action_picked] += 1
-        return action_picked
+        return ActionUpdateContext(action=action_picked)
 
     # =================
     # Internals
@@ -68,4 +73,4 @@ class UpperConfidenceBound(ExplorationExploitationStrategy):
             )
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(c={self._uncertainty_coefficient})"
+        return f"{self.__class__.__name__}(c={self.uncertainty_coefficient})"

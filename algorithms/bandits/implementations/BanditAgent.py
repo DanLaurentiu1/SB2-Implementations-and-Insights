@@ -11,6 +11,9 @@ from algorithms.bandits.implementations.action_value_initialization.ActionValueI
 from algorithms.bandits.implementations.action_value_initialization.NormalActionValueInitialization import (
     NormalActionValueInitialization,
 )
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
     ActionValueUpdateStrategy,
 )
@@ -21,7 +24,9 @@ from algorithms.bandits.implementations.BaseBanditAgent import BaseBanditAgent
 from algorithms.bandits.implementations.exploration.ExplorationExploitationContext import (
     ExplorationExploitationContext,
 )
-from algorithms.bandits.implementations.exploration.EpsilonGreedy import EpsilonGreedy
+from algorithms.bandits.implementations.exploration.EpsilonGreedy import (
+    EpsilonGreedy,
+)
 from algorithms.bandits.implementations.exploration.ExplorationExploitationStrategy import (
     ExplorationExploitationStrategy,
 )
@@ -121,15 +126,18 @@ class BanditAgent(BaseBanditAgent):
 
         while not terminated and not truncated:
             self._exploration_context.update(time_step=total_steps)
-            action: int = self._exploration_strategy.pick_action(
-                exploration_context=self._exploration_context
+            action_update_context: ActionUpdateContext = (
+                self._exploration_strategy.pick_action(
+                    exploration_context=self._exploration_context
+                )
             )
 
+            action = action_update_context.action
             _, reward, terminated, truncated, info = self._env.step(action=action)
             self._action_value_update_strategy.update_action_value(
                 q_values=self._q_values,
-                action=action,
                 reward=reward,
+                action_update_context=action_update_context,
             )
 
             total_reward += reward
@@ -185,7 +193,7 @@ class BanditAgent(BaseBanditAgent):
             )
 
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__class__.__name__},a_v={self._action_value_update_strategy.__repr__()},init={self._action_value_initialization_strategy.__repr__()})"
+        return f"{self.__class__.__name__}(s={self._seed},expl={self._exploration_strategy.__repr__()},a_v={self._action_value_update_strategy.__repr__()},init={self._action_value_initialization_strategy.__repr__()})"
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(s={self._seed},\n\tenv={self._env.__repr__()},\n\ta_v={self._action_value_update_strategy.__repr__()},\n\tinit={self._action_value_initialization_strategy.__repr__()},\n\texpl={self._exploration_strategy.__repr__()}\n)"

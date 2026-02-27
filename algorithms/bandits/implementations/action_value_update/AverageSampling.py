@@ -1,5 +1,8 @@
 import numpy as np
 import numpy.typing as npt
+from algorithms.bandits.implementations.action_value_update.ActionUpdateContext import (
+    ActionUpdateContext,
+)
 from algorithms.bandits.implementations.action_value_update.ActionValueStrategy import (
     ActionValueUpdateStrategy,
 )
@@ -17,12 +20,25 @@ class AverageSampling(ActionValueUpdateStrategy):
         super().__init__(**kwargs)
 
     # =================
+    # Properties
+    # =================
+
+    @property
+    def action_counts(self) -> npt.NDArray[np.float64]:
+        return self._action_counts
+
+    # =================
     # Public API
     # =================
 
     def update_action_value(
-        self, q_values: npt.NDArray[np.float64], action: int, reward: np.float64
+        self,
+        q_values: npt.NDArray[np.float64],
+        reward: np.float64,
+        action_update_context: ActionUpdateContext,
     ) -> None:
+        action = action_update_context.action
+
         self._action_counts[action] += 1
         q_values[action] += (1 / self._action_counts[action]) * (
             reward - q_values[action]

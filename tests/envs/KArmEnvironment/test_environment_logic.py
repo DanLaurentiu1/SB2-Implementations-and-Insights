@@ -69,21 +69,21 @@ def test_get_obs(stationary_env: KArmEnvironment):
 def test_get_new_arms(stationary_env: KArmEnvironment):
     # WHEN
     stationary_env._get_new_arms()
-    optimal_arm_index = int(np.argmax(stationary_env._arm_means))
+    optimal_arm_index = int(np.argmax(stationary_env._arms))
 
     # THEN
-    assert isinstance(stationary_env.arm_means, np.ndarray)
-    assert isinstance(stationary_env.arm_means[0], np.float64)
-    assert len(stationary_env.arm_means) == stationary_env.number_of_arms
+    assert isinstance(stationary_env.arms, np.ndarray)
+    assert isinstance(stationary_env.arms[0], np.float64)
+    assert len(stationary_env.arms) == stationary_env.number_of_arms
     assert optimal_arm_index == stationary_env.optimal_arm
     assert 0 <= optimal_arm_index < stationary_env.number_of_arms
 
 
 def test_reset(stationary_env: KArmEnvironment):
     # WHEN
-    previous_arms = stationary_env.arm_means
+    previous_arms = stationary_env.arms
     reset_observation, reset_information = stationary_env.reset()
-    current_arms = stationary_env.arm_means
+    current_arms = stationary_env.arms
 
     # THEN
     assert stationary_env._pulls == 0
@@ -119,7 +119,7 @@ def test_step_terminated(stationary_env: KArmEnvironment):
 
 def test_step_reward_values(stationary_env: KArmEnvironment):
     # WHEN
-    for index, mean in enumerate(stationary_env.arm_means):
+    for index, mean in enumerate(stationary_env.arms):
         _, reward, _, _, _ = stationary_env.step(index)
 
         # THEN
@@ -176,6 +176,17 @@ def test_validate_input_max_steps_invalid():
     )
 
 
+def test_validate_input_arms_variance_invalid():
+    # WHEN
+    with pytest.raises(EnvironmentLogicException) as exception_output:
+        KArmEnvironment(number_of_arms=2, seed=16, max_steps=10, arms_variance=-1)
+
+    # THEN
+    assert "Invalid arms_variance=-1. This number must be positive." in str(
+        exception_output.value
+    )
+
+
 def test_validate_action_invalid(stationary_env: KArmEnvironment):
     # WHEN
     with pytest.raises(EnvironmentLogicException) as exception_output:
@@ -196,7 +207,7 @@ def test_step_non_stationary_optimal_arm_stays_consistent(
 
     while not terminated and not truncated:
         # THEN
-        assert non_stationary_env.optimal_arm == np.argmax(non_stationary_env.arm_means)
+        assert non_stationary_env.optimal_arm == np.argmax(non_stationary_env.arms)
         _, _, terminated, truncated, _ = non_stationary_env.step(action=0)
 
 
